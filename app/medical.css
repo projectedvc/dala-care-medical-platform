@@ -1,0 +1,686 @@
+.medical-site {
+  --ink: #eefcfb;
+  --muted: #91aaa9;
+  --line: rgba(193, 255, 249, 0.12);
+  --amber: #35e3d3;
+  --purple: #8d7cff;
+  --green: #45f0a8;
+  --coral: #ff7d8f;
+  --black: #031011;
+  background:
+    radial-gradient(circle at 78% 5%, rgba(46, 229, 211, 0.08), transparent 26rem),
+    radial-gradient(circle at 14% 38%, rgba(58, 111, 136, 0.07), transparent 34rem),
+    #031011;
+}
+
+.medical-site .scroll-meter span {
+  background: linear-gradient(90deg, #35e3d3, #77bfff, #8d7cff, #ff7d8f);
+}
+
+.medical-site .site-header {
+  border-bottom-color: rgba(184, 255, 249, 0.1);
+  background: linear-gradient(180deg, rgba(3, 16, 17, 0.95), rgba(3, 16, 17, 0.58));
+}
+
+.medical-site .brand {
+  letter-spacing: -0.05em;
+}
+
+.medical-site .brand-mark {
+  color: #031011;
+  background: #b8fff7;
+  font-family: var(--sans);
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 400;
+  box-shadow: 0 0 24px rgba(53, 227, 211, 0.25);
+  transform: none;
+}
+
+.medical-site .access-button,
+.medical-site .cta-button {
+  color: #031011;
+  background: linear-gradient(105deg, #b8fff7, #65e9dd);
+  box-shadow: 0 10px 40px rgba(53, 227, 211, 0.13);
+}
+
+.medical-site .access-button b,
+.medical-site .cta-button b {
+  color: #dffefa;
+  background: #092628;
+}
+
+.medical-site .site-nav a:hover,
+.medical-site .text-link:hover,
+.medical-site .footer-links a:hover {
+  color: #79f4e8;
+}
+
+.medical-site .noise {
+  opacity: 0.055;
+}
+
+.medical-site .cursor-dot {
+  background: radial-gradient(circle, #ffffff 0 16%, #9ffff5 31%, #35e3d3 56%, rgba(53, 227, 211, 0) 74%);
+  filter: drop-shadow(0 0 5px rgba(222, 255, 252, 1)) drop-shadow(0 0 14px rgba(53, 227, 211, 0.85));
+}
+
+.medical-site .cursor-glow {
+  border-color: rgba(53, 227, 211, 0.28);
+  box-shadow: inset 0 0 18px rgba(53, 227, 211, 0.04), 0 0 22px rgba(53, 227, 211, 0.08);
+}
+
+.medical-site .cursor-glow::before,
+.medical-site .cursor-glow::after {
+  background: linear-gradient(90deg, transparent, rgba(143, 255, 246, 0.56), transparent);
+}
+
+.medical-site .tech-label i,
+.medical-site .hero-status i {
+  background: #6effef;
+  box-shadow: 0 0 11px rgba(53, 227, 211, 0.95);
+}
+
+.medical-site .hero::after {
+  background:
+    linear-gradient(90deg, rgba(3, 16, 17, 0.92) 0%, rgba(3, 16, 17, 0.54) 25%, rgba(3, 16, 17, 0.08) 47%, transparent 68%),
+    linear-gradient(180deg, rgba(3, 16, 17, 0.08), transparent 24%, rgba(3, 16, 17, 0.2));
+}
+
+.medical-site .hero-core-aura {
+  background:
+    radial-gradient(circle, rgba(222, 255, 252, 0.2) 0 3%, rgba(53, 227, 211, 0.09) 12%, transparent 32%),
+    radial-gradient(circle, transparent 38%, rgba(53, 227, 211, 0.09) 39%, rgba(141, 124, 255, 0.045) 47%, transparent 58%),
+    conic-gradient(from 80deg, transparent, rgba(53, 227, 211, 0.07), transparent 25%, rgba(141, 124, 255, 0.05), transparent 64%);
+}
+
+.medical-site .hero h1 .outline,
+.medical-site .investors h2 em,
+.medical-site .final-cta h2 em {
+  color: rgba(238, 252, 251, 0.025);
+  -webkit-text-stroke-color: rgba(184, 255, 247, 0.7);
+}
+
+.medical-site .data-tag {
+  border-color: rgba(132, 255, 244, 0.18);
+  background: rgba(3, 16, 17, 0.82);
+}
+
+.medical-site .data-tag strong,
+.medical-site .energy-axis-node b {
+  color: #6effef;
+}
+
+.medical-site .round-link,
+.medical-site .team-buttons button,
+.medical-site .footer-top-link {
+  border-color: rgba(193, 255, 249, 0.28);
+  background: rgba(3, 16, 17, 0.58);
+}
+
+.medical-site .round-link:hover,
+.medical-site .team-buttons button:hover,
+.medical-site .footer-top-link:hover {
+  color: #031011;
+  border-color: #79f4e8;
+  background: #79f4e8;
+}
+
+.medical-site .text-link {
+  border-bottom-color: rgba(184, 255, 247, 0.32);
+}
+
+.medical-site .text-link span,
+.medical-site .footer-top-link b {
+  color: #79f4e8;
+}
+
+.medical-site .manifesto,
+.medical-site .spark,
+.medical-site .world,
+.medical-site .energy-system,
+.medical-site .team,
+.medical-site .investors,
+.medical-site .connection,
+.medical-site .final-cta {
+  background: transparent;
+}
+
+.medical-site .spark-copy,
+.medical-site .world-copy,
+.medical-site .energy-system-copy,
+.medical-site .team-copy,
+.medical-site .investors-copy,
+.medical-site .cta-copy {
+  text-shadow: 0 2px 36px rgba(0, 8, 10, 0.92);
+}
+
+.medical-site .medical-signal::before,
+.medical-site .energy-system::before,
+.medical-site .investors::before {
+  background: radial-gradient(ellipse 48% 54% at 34% 50%, rgba(3, 16, 17, 0.12), rgba(3, 16, 17, 0.76) 72%, transparent 100%);
+}
+
+.medical-site .portrait-frame {
+  border-color: rgba(166, 255, 247, 0.22);
+  background: #092022;
+  box-shadow: 0 30px 80px rgba(0, 6, 8, 0.48);
+}
+
+.medical-site .portrait-frame img {
+  filter: grayscale(0.45) contrast(1.03) brightness(0.82) saturate(0.8);
+}
+
+.medical-site .portrait-frame::after {
+  background:
+    linear-gradient(180deg, rgba(0, 0, 0, 0.04), transparent 56%, rgba(0, 10, 12, 0.78)),
+    linear-gradient(110deg, rgba(53, 227, 211, 0.1), transparent 45%, rgba(141, 124, 255, 0.12));
+}
+
+.medical-site .portrait-scan {
+  background: linear-gradient(90deg, transparent, #6effef, transparent);
+  box-shadow: 0 0 12px #35e3d3;
+}
+
+.medical-site .team-counter i {
+  background: linear-gradient(90deg, #6effef, rgba(255, 255, 255, 0.12));
+}
+
+.medical-site .connection.consultation {
+  min-height: 168vh;
+  overflow: hidden;
+}
+
+.medical-site .connection.consultation::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 20% 40%, rgba(53, 227, 211, 0.08), transparent 22rem),
+    radial-gradient(circle at 82% 62%, rgba(141, 124, 255, 0.08), transparent 25rem),
+    linear-gradient(180deg, rgba(3, 16, 17, 0.06), rgba(3, 16, 17, 0.44) 34%, rgba(3, 16, 17, 0.78) 90%);
+}
+
+.meeting-shell {
+  position: absolute;
+  top: 13%;
+  right: 5.5vw;
+  left: 5.5vw;
+  z-index: 8;
+  min-height: 69vh;
+  overflow: hidden;
+  border: 1px solid rgba(185, 255, 248, 0.15);
+  border-radius: 25px;
+  background: linear-gradient(135deg, rgba(10, 35, 37, 0.9), rgba(4, 19, 21, 0.94)), #07191b;
+  box-shadow: 0 42px 120px rgba(0, 5, 7, 0.6), inset 0 1px rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(22px);
+}
+
+.meeting-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 62px;
+  padding: 0 24px;
+  border-bottom: 1px solid rgba(185, 255, 248, 0.1);
+  color: #779290;
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.meeting-topbar > div {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.meeting-topbar strong {
+  color: #dffefa;
+  font-weight: 400;
+}
+
+.meeting-live-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #59efa9;
+  box-shadow: 0 0 12px rgba(69, 240, 168, 0.86);
+  animation: meeting-pulse 1.8s ease-in-out infinite;
+}
+
+.meeting-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.75fr) minmax(300px, 0.75fr);
+  min-height: calc(69vh - 62px);
+}
+
+.doctor-video {
+  position: relative;
+  min-height: 590px;
+  overflow: hidden;
+  background: radial-gradient(circle at 50% 38%, rgba(89, 190, 188, 0.18), transparent 25rem), #061416;
+}
+
+.doctor-video > img {
+  width: 100%;
+  height: 100%;
+  min-height: 590px;
+  object-fit: cover;
+  object-position: center 28%;
+  filter: saturate(0.72) contrast(1.04) brightness(0.84);
+  transform: scale(1.015);
+}
+
+.doctor-video::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(2, 15, 17, 0.02), transparent 48%, rgba(2, 13, 15, 0.78)),
+    linear-gradient(90deg, transparent 74%, rgba(3, 16, 17, 0.35));
+  pointer-events: none;
+}
+
+.video-soft-light {
+  position: absolute;
+  top: 8%;
+  left: 14%;
+  z-index: 2;
+  width: 30%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: rgba(181, 255, 248, 0.13);
+  filter: blur(70px);
+  pointer-events: none;
+}
+
+.speaker-label,
+.call-quality {
+  position: absolute;
+  z-index: 3;
+  bottom: 24px;
+  border: 1px solid rgba(185, 255, 248, 0.12);
+  background: rgba(3, 16, 17, 0.66);
+  backdrop-filter: blur(16px);
+}
+
+.speaker-label {
+  left: 24px;
+  display: grid;
+  gap: 4px;
+  padding: 11px 15px;
+}
+
+.speaker-label strong {
+  font-size: 13px;
+  font-weight: 400;
+}
+
+.speaker-label span,
+.call-quality {
+  color: #8ca3a1;
+  font-family: var(--mono);
+  font-size: 8px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.call-quality {
+  right: 24px;
+  padding: 10px 12px;
+}
+
+.camera-placeholder {
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 15px;
+  min-height: 590px;
+}
+
+.camera-placeholder span {
+  display: grid;
+  place-items: center;
+  width: 94px;
+  height: 94px;
+  border: 1px solid rgba(185, 255, 248, 0.2);
+  border-radius: 50%;
+  color: #b8fff7;
+  font-size: 28px;
+  background: rgba(53, 227, 211, 0.06);
+}
+
+.camera-placeholder small {
+  color: #7b9593;
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.clinical-panel {
+  position: relative;
+  z-index: 4;
+  padding: 27px 25px 110px;
+  border-left: 1px solid rgba(185, 255, 248, 0.1);
+  background: rgba(4, 20, 22, 0.8);
+}
+
+.clinical-panel-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(185, 255, 248, 0.1);
+}
+
+.clinical-panel-heading span,
+.vital-strip span,
+.visit-focus > span,
+.clinical-note > span {
+  color: #78918f;
+  font-family: var(--mono);
+  font-size: 8px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.clinical-panel-heading strong {
+  font-size: 16px;
+  font-weight: 400;
+}
+
+.vital-strip {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  margin: 22px -5px;
+  background: rgba(185, 255, 248, 0.08);
+}
+
+.vital-strip > div {
+  position: relative;
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  min-height: 116px;
+  padding: 15px 10px;
+  overflow: hidden;
+  background: #071d1f;
+}
+
+.vital-strip strong {
+  color: #e8fffc;
+  font-size: 18px;
+  font-weight: 300;
+}
+
+.vital-strip strong small,
+.vital-strip > div > small {
+  color: #6d8886;
+  font-family: var(--mono);
+  font-size: 7px;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+}
+
+.vital-wave {
+  position: absolute;
+  right: -3px;
+  bottom: 16px;
+  left: -3px;
+  height: 15px;
+  opacity: 0.5;
+  background: linear-gradient(115deg, transparent 0 34%, #59efa9 35% 36%, transparent 37% 44%, #59efa9 45% 46%, transparent 47% 52%, #59efa9 53% 54%, transparent 55%);
+}
+
+.visit-focus,
+.clinical-note {
+  margin-top: 25px;
+}
+
+.visit-focus p,
+.clinical-note p {
+  margin: 10px 0 0;
+  color: #c1d5d3;
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+.clinical-note {
+  padding: 18px;
+  border: 1px solid rgba(185, 255, 248, 0.1);
+  border-radius: 13px;
+  background: rgba(53, 227, 211, 0.04);
+}
+
+.open-record-button {
+  position: absolute;
+  right: 25px;
+  bottom: 28px;
+  left: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 48px;
+  padding: 0 17px;
+  border: 1px solid rgba(185, 255, 248, 0.17);
+  border-radius: 999px;
+  color: #c9e7e4;
+  background: rgba(4, 21, 23, 0.8);
+  font-family: var(--mono);
+  font-size: 8px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.open-record-button b {
+  color: #79f4e8;
+}
+
+.patient-pip {
+  position: absolute;
+  right: calc(28.5% + 26px);
+  bottom: 112px;
+  z-index: 8;
+  width: 180px;
+  overflow: hidden;
+  border: 1px solid rgba(213, 255, 251, 0.26);
+  border-radius: 15px;
+  box-shadow: 0 18px 50px rgba(0, 7, 9, 0.55);
+}
+
+.patient-pip img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1.35;
+  object-fit: cover;
+  filter: saturate(0.65) brightness(0.82);
+}
+
+.patient-pip span {
+  position: absolute;
+  bottom: 8px;
+  left: 9px;
+  padding: 4px 7px;
+  border-radius: 999px;
+  background: rgba(3, 16, 17, 0.72);
+  font-family: var(--mono);
+  font-size: 7px;
+  letter-spacing: 0.06em;
+}
+
+.meeting-controls {
+  position: absolute;
+  bottom: 24px;
+  left: calc(35% - 120px);
+  z-index: 9;
+  display: flex;
+  gap: 9px;
+  padding: 8px;
+  border: 1px solid rgba(185, 255, 248, 0.14);
+  border-radius: 999px;
+  background: rgba(2, 14, 16, 0.83);
+  box-shadow: 0 16px 50px rgba(0, 6, 8, 0.44);
+  backdrop-filter: blur(18px);
+}
+
+.meeting-controls button {
+  display: grid;
+  place-items: center;
+  gap: 3px;
+  min-width: 65px;
+  height: 50px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 999px;
+  color: #dbf8f5;
+  background: rgba(185, 255, 248, 0.08);
+  transition: background 180ms ease, transform 180ms ease;
+}
+
+.meeting-controls button:hover {
+  background: rgba(185, 255, 248, 0.16);
+  transform: translateY(-2px);
+}
+
+.meeting-controls button span {
+  font-family: var(--mono);
+  font-size: 8px;
+  letter-spacing: 0.08em;
+}
+
+.meeting-controls button small {
+  color: #78918f;
+  font-size: 7px;
+}
+
+.meeting-controls button.is-off,
+.meeting-controls .end-call {
+  color: white;
+  background: rgba(255, 82, 108, 0.18);
+}
+
+.meeting-controls .end-call {
+  min-width: 74px;
+  background: #d94c62;
+}
+
+.medical-site .final-cta::after {
+  background: linear-gradient(180deg, transparent 0%, rgba(3, 16, 17, 0.62) 42%, #031011 91%);
+}
+
+.medical-site .site-footer {
+  background: radial-gradient(circle at 73% 10%, rgba(53, 227, 211, 0.07), transparent 28rem), #031011;
+}
+
+@keyframes meeting-pulse {
+  0%, 100% { opacity: 0.5; transform: scale(0.78); }
+  50% { opacity: 1; transform: scale(1.15); }
+}
+
+@media (max-width: 1100px) {
+  .meeting-grid {
+    grid-template-columns: minmax(0, 1.4fr) minmax(280px, 0.8fr);
+  }
+
+  .vital-strip {
+    grid-template-columns: 1fr;
+    gap: 5px;
+    background: transparent;
+  }
+
+  .vital-strip > div {
+    min-height: 76px;
+  }
+
+  .patient-pip {
+    right: calc(36% + 20px);
+  }
+}
+
+@media (max-width: 900px) {
+  .medical-site .site-nav {
+    background: rgba(3, 16, 17, 0.97);
+  }
+
+  .medical-site .connection.consultation {
+    min-height: 220svh;
+  }
+
+  .meeting-shell {
+    top: 12vh;
+    right: 14px;
+    left: 14px;
+    min-height: 175svh;
+    border-radius: 18px;
+  }
+
+  .meeting-topbar {
+    padding: 0 15px;
+  }
+
+  .meeting-topbar > span {
+    display: none;
+  }
+
+  .meeting-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .doctor-video,
+  .doctor-video > img,
+  .camera-placeholder {
+    min-height: 68svh;
+  }
+
+  .clinical-panel {
+    min-height: 92svh;
+    padding: 24px 17px 100px;
+    border-top: 1px solid rgba(185, 255, 248, 0.1);
+    border-left: 0;
+  }
+
+  .vital-strip {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .vital-strip > div {
+    min-height: 105px;
+  }
+
+  .patient-pip {
+    top: 48svh;
+    right: 25px;
+    bottom: auto;
+    width: 132px;
+  }
+
+  .meeting-controls {
+    top: 59svh;
+    bottom: auto;
+    left: 50%;
+    width: max-content;
+    transform: translateX(-50%);
+  }
+}
+
+@media (max-width: 560px) {
+  .meeting-controls button {
+    min-width: 54px;
+    padding: 0 9px;
+  }
+
+  .meeting-controls button small {
+    display: none;
+  }
+
+  .vital-strip {
+    grid-template-columns: 1fr;
+  }
+}
