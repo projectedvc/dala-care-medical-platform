@@ -207,11 +207,11 @@ const VERTEX_SHADER = /* glsl */ `
     );
     localShape = rotateX * rotateY * localShape;
 
-    // The hero is a continuously advecting energy stream, not a frozen tunnel.
-    // Wall and core particles loop from the left aperture to the right while
-    // the two dense end rings rotate in place and replenish the current.
-    float heroSpin = sin(uTime * 0.16) * 0.105 * uMotionStrength;
-    float heroNod = sin(uTime * 0.21) * 0.055 * uMotionStrength;
+    // The medical hero is a calm patient digital twin. It breathes and turns
+    // slightly while the heart core sends a pressure wave through the scan
+    // orbits; it must never collapse back into the old energy tunnel.
+    float heroSpin = sin(uTime * 0.14) * 0.12 * uMotionStrength;
+    float heroNod = sin(uTime * 0.18) * 0.035 * uMotionStrength;
     mat3 rotateHeroY = mat3(
       cos(heroSpin), 0.0, sin(heroSpin),
       0.0, 1.0, 0.0,
@@ -223,38 +223,17 @@ const VERTEX_SHADER = /* glsl */ `
       0.0, sin(heroNod), cos(heroNod)
     );
     localShape = mix(localShape, rotateHeroX * rotateHeroY * localShape, heroStage);
-    vec3 heroSource = aFrom - vec3(0.18, 0.0, 0.0);
-    float leftRingMask = 1.0 - smoothstep(0.5, 0.82, abs(heroSource.x + 4.75));
-    float rightRingMask = 1.0 - smoothstep(0.5, 0.82, abs(heroSource.x - 4.15));
-    float heroRingMask = max(leftRingMask, rightRingMask);
-    float baseProgress = clamp((heroSource.x + 4.75) / 8.9, 0.0, 1.0);
-    float flowSpeed = 0.052 + fract(aSeed * 17.37) * 0.026;
-    float flowProgress = fract(baseProgress + uTime * flowSpeed);
-    float baseAngle = atan(heroSource.z, heroSource.y);
-    float streamAngle = baseAngle + flowProgress * 7.4 + uTime * 0.18;
-    float streamRadius = max(0.025, length(heroSource.yz));
-    float radiusPulse = 1.0 + sin(uTime * 0.42 - flowProgress * 12.0 + aSeed * 8.0) * 0.035;
-    vec3 flowingHero = vec3(
-      mix(-4.75, 4.15, flowProgress) - sin(streamAngle) * streamRadius * 0.11,
-      cos(streamAngle) * streamRadius * radiusPulse,
-      sin(streamAngle) * streamRadius * radiusPulse
-    );
-    float ringDirection = mix(-1.0, 1.0, leftRingMask);
-    float ringAngle = baseAngle + uTime * 0.24 * ringDirection;
-    float ringCenterX = mix(4.15, -4.75, leftRingMask);
-    vec3 rotatingRing = vec3(
-      ringCenterX - sin(ringAngle) * streamRadius * 0.36,
-      cos(ringAngle) * streamRadius * 0.86,
-      sin(ringAngle) * streamRadius
-    );
-    vec3 animatedHero = mix(flowingHero, rotatingRing, heroRingMask);
-    // Fit the field to the actual viewport rather than assuming a fixed 16:9
-    // canvas. Wide displays receive a longer, slightly lower stream.
-    float heroAspectScale = clamp(uViewportAspect / 1.68, 0.88, 1.16);
-    float wideViewport = smoothstep(1.58, 1.96, uViewportAspect);
-    animatedHero.x = animatedHero.x * heroAspectScale + wideViewport * 0.24;
-    animatedHero.y *= mix(1.02, 0.94, wideViewport);
-    localShape = mix(localShape, animatedHero, heroStage * uMotionStrength);
+    vec3 heroHeart = vec3(-0.22, 0.2, 0.42);
+    float heartDistance = distance(localShape, heroHeart);
+    float heartMask = 1.0 - smoothstep(0.12, 1.18, heartDistance);
+    float heartbeat = pow(0.5 + 0.5 * sin(uTime * 2.25), 10.0);
+    vec3 heartDirection = normalize(localShape - heroHeart + vec3(0.0001));
+    localShape += heartDirection * heartbeat * heartMask * 0.065 * heroStage;
+    float breathMask = 1.0 - smoothstep(0.65, 2.4, abs(localShape.y));
+    localShape.xz *= 1.0 + sin(uTime * 0.72) * 0.018 * heroStage * breathMask;
+    float scanRadius = length(vec2(localShape.x * 0.72, localShape.y));
+    float scanWave = sin(uTime * 1.15 - scanRadius * 3.6 + aSeed * 4.0) * 0.012;
+    localShape.z += scanWave * heroStage * uMotionStrength;
 
     center = uFormCenter + localShape;
 
@@ -369,8 +348,8 @@ const VERTEX_SHADER = /* glsl */ `
       0.5 + 0.5 * sin(uTime * 0.85 - center.x * 3.2 + aSeed * 4.8),
       8.0
     );
-    shardVertex.x *= 1.0 + heroStage * (1.35 + heroStreakPulse * 0.85);
-    shardVertex.yz *= 1.0 - heroStage * 0.26;
+    shardVertex *= 1.0 + heroStage * heroStreakPulse * 0.28;
+    shardVertex.x *= 1.0 + heroStage * 0.12;
     vec3 shardNormal = normalize(shardRotationX * shardRotationZ * normal);
     vec4 viewPosition = modelViewMatrix * vec4(center + shardVertex, 1.0);
     vec3 viewNormal = normalize(normalMatrix * shardNormal);
@@ -406,21 +385,21 @@ const VERTEX_SHADER = /* glsl */ `
       if (rainbow > 0.93) vColor = whiteHot;
     }
 
-    // Each lightning cluster in the final composition receives its own energy
-    // colour, while a moving white crest makes the current visibly travel.
+    // The final stethoscope keeps the same clinical palette: teal tubing,
+    // a white listening membrane and a subtle travelling ECG highlight.
     float finalStage = smoothstep(7.42, 7.88, uStage);
-    vec3 finalColor = gold;
-    if (center.x < -3.35 && center.y > 0.0) finalColor = whiteHot;
-    if (center.x < -3.35 && center.y <= 0.0) finalColor = violet;
-    if (center.x > -1.5 && center.y > 0.35) finalColor = violet;
-    if (center.x > -1.55 && center.y < -0.45) finalColor = green;
-    if (center.x > -0.45 && abs(center.y) < 0.65) finalColor = amber;
+    vec3 finalColor = mix(amber, green, smoothstep(-4.5, -0.6, center.x) * 0.58);
+    float chestDistance = distance(center.xy, vec2(-2.34, -1.12));
+    float chestMask = 1.0 - smoothstep(0.34, 0.78, chestDistance);
+    finalColor = mix(finalColor, whiteHot, chestMask * 0.88);
+    float earMask = smoothstep(1.18, 1.48, center.y);
+    finalColor = mix(finalColor, violet, earMask * 0.24);
     float finalCurrent = pow(
-      0.5 + 0.5 * sin(uTime * 2.35 - center.y * 4.1 + aSeed * 2.7),
-      8.0
+      0.5 + 0.5 * sin(uTime * 1.45 - center.x * 3.1 + aSeed * 1.8),
+      10.0
     );
     vColor = mix(vColor, finalColor, finalStage * 0.9);
-    vColor += whiteHot * finalStage * finalCurrent * 0.72;
+    vColor += whiteHot * finalStage * finalCurrent * 0.48;
 
     vec3 volumeNormal = normalize(center - uFormCenter + vec3(0.0001));
     vec3 keyLight = normalize(vec3(-0.48, 0.62, 0.72));
@@ -563,8 +542,8 @@ const HAND_VERTEX_SHADER = /* glsl */ `
 
     vec3 sourcePivot = vec3(side * 2.33, 0.02, 0.0);
     vec3 pivot = mix(
-      vec3(-2.3, -0.12, -0.1),
-      vec3(2.28, 0.08, 0.14),
+      vec3(-2.3, 0.0, -0.1),
+      vec3(2.28, 0.0, 0.14),
       rightHand
     );
     vec3 local = aPosition - sourcePivot;
@@ -674,9 +653,9 @@ const HAND_VERTEX_SHADER = /* glsl */ `
     rightColor *= mix(0.68, 1.18, surfaceDepth);
     vColor = mix(leftColor, rightColor, step(0.0, side));
     float contactGlow = contact * (1.0 - smoothstep(0.04, 0.38, length(center.xy)));
-    vColor += whiteHot * contactGlow * 1.8;
+    vColor += whiteHot * contactGlow * 0.38;
     vAlpha = visibleIn * visibleOut * mix(0.72, 1.0, particleDepth) * (1.0 - exit * 0.38);
-    vAlpha += contactGlow * 0.5;
+    vAlpha += contactGlow * 0.12;
     vLocal = position.xy;
     vDepth = particleDepth;
     vGlint = step(0.968, fract(aSeed * 41.17)) * particleDepth;
@@ -697,11 +676,8 @@ function mulberry32(seed: number) {
 
 function makeEnergyGenerator(count: number, random: () => number) {
   const data = new Float32Array(count * 3);
-  const centerX = 0.18;
-  const centerY = 0;
   const TAU = Math.PI * 2;
-  const leftX = -4.75;
-  const rightX = 4.15;
+  const center = { x: 2.15, y: 0.05, z: 0 };
 
   for (let i = 0; i < count; i += 1) {
     const kind = random();
@@ -709,51 +685,70 @@ function makeEnergyGenerator(count: number, random: () => number) {
     let y = 0;
     let z = 0;
 
-    // The outer vortex wall. These samples are advected along X in the shader,
-    // so the silhouette remains cylindrical while every shard keeps moving.
-    if (kind < 0.53) {
-      const progress = random();
-      const angle = TAU * (random() + progress * 1.25);
-      const radius = 1.19 + random() * 0.37 + (random() - 0.5) * 0.11;
-      x = THREE.MathUtils.lerp(leftX, rightX, progress);
-      y = Math.cos(angle) * radius * 0.84;
-      z = Math.sin(angle) * radius;
-    // A dense inner filament produces the bright moving current seen through
-    // the cylinder rather than leaving an empty black centre.
-    } else if (kind < 0.72) {
-      const progress = random();
-      const angle = TAU * (random() + progress * 1.8);
-      const radius = Math.pow(random(), 2.25) * 0.78 + 0.025;
-      x = THREE.MathUtils.lerp(leftX, rightX, progress);
-      y = Math.cos(angle) * radius * 0.72;
-      z = Math.sin(angle) * radius;
-    // The left aperture is an elliptical particle ring, tilted toward camera.
-    } else if (kind < 0.845) {
+    // A volumetric patient "digital twin": head and torso are sampled as
+    // shells, with a live heart and diagnostic scan arcs visible through it.
+    if (kind < 0.16) {
+      const theta = random() * TAU;
+      const phi = Math.acos(2 * random() - 1);
+      const radius = 0.52 + (random() - 0.5) * 0.08;
+      x = Math.cos(theta) * Math.sin(phi) * radius;
+      y = 1.58 + Math.cos(phi) * radius * 1.08;
+      z = Math.sin(theta) * Math.sin(phi) * radius * 0.9;
+    } else if (kind < 0.53) {
+      y = THREE.MathUtils.lerp(-1.85, 0.98, random());
+      const normalizedY = (y + 0.42) / 1.45;
+      const shoulder = Math.exp(-Math.pow((normalizedY - 0.68) / 0.32, 2));
+      const waist = Math.exp(-Math.pow((normalizedY + 0.4) / 0.42, 2));
+      const width = 0.72 + shoulder * 0.72 - waist * 0.18;
       const angle = random() * TAU;
-      const radius = 1.55 + (random() - 0.5) * 0.25;
-      x = leftX - Math.sin(angle) * radius * 0.36;
-      y = Math.cos(angle) * radius * 0.86;
-      z = Math.sin(angle) * radius;
-    // The opposite aperture rotates in the other direction.
-    } else if (kind < 0.97) {
+      const shell = 0.86 + random() * 0.16;
+      x = Math.cos(angle) * width * shell;
+      z = Math.sin(angle) * width * 0.52 * shell;
+      if (y < -1.28) {
+        const legSide = random() < 0.5 ? -1 : 1;
+        x = legSide * (0.28 + random() * 0.17) + (random() - 0.5) * 0.14;
+        z *= 0.64;
+      }
+    } else if (kind < 0.7) {
+      // Anatomical heart core, deliberately offset to the patient's left.
       const angle = random() * TAU;
-      const radius = 1.55 + (random() - 0.5) * 0.25;
-      x = rightX - Math.sin(angle) * radius * 0.36;
-      y = Math.cos(angle) * radius * 0.86;
-      z = Math.sin(angle) * radius;
-    // Sparse sparks soften both openings and keep the full-screen scale.
+      const fill = 0.24 + Math.sqrt(random()) * 0.76;
+      const rawX = 16 * Math.pow(Math.sin(angle), 3);
+      const rawY =
+        13 * Math.cos(angle) -
+        5 * Math.cos(2 * angle) -
+        2 * Math.cos(3 * angle) -
+        Math.cos(4 * angle);
+      x = -0.22 + rawX * 0.021 * fill;
+      y = 0.18 + rawY * 0.023 * fill;
+      z = 0.42 + (random() - 0.5) * 0.38;
+    } else if (kind < 0.91) {
+      // Three tilted scan orbits make the body read as a clinical model rather
+      // than a generic human silhouette.
+      const orbit = Math.floor(random() * 3);
+      const angle = random() * TAU;
+      const radii = [
+        [1.72, 0.84, 0.44],
+        [1.43, 1.26, 0.7],
+        [1.95, 1.56, 0.34],
+      ][orbit];
+      x = Math.cos(angle) * radii[0];
+      y = 0.1 + Math.sin(angle) * radii[1];
+      z = Math.sin(angle + orbit * 0.78) * radii[2];
+      x += (random() - 0.5) * 0.055;
+      y += (random() - 0.5) * 0.055;
     } else {
-      const side = random() < 0.5 ? leftX : rightX;
+      // Circulating micro-signals fill the volume without hiding the anatomy.
       const angle = random() * TAU;
-      const spread = 1.58 + random() * 0.72;
-      x = side + (random() - 0.5) * 0.7;
-      y = Math.cos(angle) * spread * 0.82;
-      z = Math.sin(angle) * spread;
+      const radius = 0.45 + Math.pow(random(), 0.72) * 1.85;
+      x = Math.cos(angle) * radius * 0.86;
+      y = (random() - 0.5) * 3.5;
+      z = Math.sin(angle) * radius * 0.5;
     }
 
-    data[i * 3] = centerX + x;
-    data[i * 3 + 1] = centerY + y;
-    data[i * 3 + 2] = z;
+    data[i * 3] = center.x + x;
+    data[i * 3 + 1] = center.y + y;
+    data[i * 3 + 2] = center.z + z;
   }
 
   return data;
@@ -761,11 +756,37 @@ function makeEnergyGenerator(count: number, random: () => number) {
 
 function makeCloud(count: number, random: () => number, spread = 1) {
   const data = new Float32Array(count * 3);
+  const gaussian = (value: number, center: number, width: number) =>
+    Math.exp(-Math.pow((value - center) / width, 2));
   for (let i = 0; i < count; i += 1) {
-    const edgeBias = Math.pow(random(), 0.72);
-    data[i * 3] = (random() - 0.5) * 10.8 * spread * edgeBias;
-    data[i * 3 + 1] = (random() - 0.5) * 6.5 * spread;
-    data[i * 3 + 2] = (random() - 0.5) * 3.4;
+    if (random() < 0.7) {
+      // A continuous ECG trace repeats across the viewport. The secondary,
+      // translucent traces behind it produce depth without creating a wall.
+      const progress = random();
+      const cycle = (progress * 3.05) % 1;
+      const trace =
+        gaussian(cycle, 0.17, 0.035) * 0.18 -
+        gaussian(cycle, 0.35, 0.022) * 0.24 +
+        gaussian(cycle, 0.405, 0.013) * 1.36 -
+        gaussian(cycle, 0.445, 0.018) * 0.54 +
+        gaussian(cycle, 0.7, 0.07) * 0.34;
+      const layer = Math.floor(random() * 4);
+      data[i * 3] = THREE.MathUtils.lerp(-5.35, 5.35, progress) * spread;
+      data[i * 3 + 1] =
+        (trace - 0.16) * (1 - layer * 0.12) +
+        (layer - 1.5) * 0.43 +
+        (random() - 0.5) * 0.07;
+      data[i * 3 + 2] = (layer - 1.5) * 0.42 + (random() - 0.5) * 0.22;
+    } else {
+      // Sparse blood-cell discs drift around the trace.
+      const angle = random() * Math.PI * 2;
+      const centerX = (random() - 0.5) * 9.4;
+      const centerY = (random() - 0.5) * 4.1;
+      const radius = 0.08 + random() * 0.22;
+      data[i * 3] = centerX + Math.cos(angle) * radius;
+      data[i * 3 + 1] = centerY + Math.sin(angle) * radius * 0.58;
+      data[i * 3 + 2] = (random() - 0.5) * 2.8;
+    }
   }
   return data;
 }
@@ -1042,56 +1063,73 @@ function makeHands(count: number, random: () => number) {
 
 function makeEnergyHub(count: number, random: () => number) {
   const data = new Float32Array(count * 3);
-  const bolts = [
-    { x: -2.42, y: 0.05, height: 3.35, width: 1.08, rotation: -0.22, weight: 0.22 },
-    { x: -4.25, y: 1.42, height: 1.92, width: 0.62, rotation: 0.88, weight: 0.1 },
-    { x: -4.08, y: -1.38, height: 1.76, width: 0.56, rotation: -1.02, weight: 0.09 },
-    { x: -1.04, y: 1.63, height: 1.86, width: 0.62, rotation: -0.78, weight: 0.1 },
-    { x: -0.86, y: -1.48, height: 1.96, width: 0.66, rotation: 0.94, weight: 0.1 },
-    { x: 0.06, y: 0.68, height: 1.48, width: 0.5, rotation: -0.52, weight: 0.08 },
-    { x: -3.02, y: 1.94, height: 1.54, width: 0.5, rotation: 1.17, weight: 0.08 },
-    { x: -2.08, y: -1.86, height: 1.62, width: 0.52, rotation: 0.46, weight: 0.08 },
-    { x: -4.72, y: 0.05, height: 1.42, width: 0.48, rotation: -0.12, weight: 0.07 },
-    { x: -1.62, y: 0.64, height: 1.24, width: 0.44, rotation: -1.28, weight: 0.08 },
-  ];
-  const cumulativeWeights: number[] = [];
-  let weightTotal = 0;
-  for (const bolt of bolts) {
-    weightTotal += bolt.weight;
-    cumulativeWeights.push(weightTotal);
-  }
-  const offsets = [0.08, 0.34, -0.26, 0.38, -0.2, 0.25, -0.02];
+  const TAU = Math.PI * 2;
+  const cubic = (
+    start: [number, number],
+    controlA: [number, number],
+    controlB: [number, number],
+    end: [number, number],
+    progress: number,
+  ) => {
+    const inverse = 1 - progress;
+    return [
+      inverse ** 3 * start[0] +
+        3 * inverse ** 2 * progress * controlA[0] +
+        3 * inverse * progress ** 2 * controlB[0] +
+        progress ** 3 * end[0],
+      inverse ** 3 * start[1] +
+        3 * inverse ** 2 * progress * controlA[1] +
+        3 * inverse * progress ** 2 * controlB[1] +
+        progress ** 3 * end[1],
+    ] as const;
+  };
 
   for (let i = 0; i < count; i += 1) {
-    const selector = random() * weightTotal;
-    let boltIndex = cumulativeWeights.findIndex((weight) => selector <= weight);
-    if (boltIndex < 0) boltIndex = bolts.length - 1;
-    const bolt = bolts[boltIndex];
-    const progress = random();
-    const scaled = progress * (offsets.length - 1);
-    const segment = Math.min(offsets.length - 2, Math.floor(scaled));
-    const localProgress = scaled - segment;
-    const centreLine = THREE.MathUtils.lerp(
-      offsets[segment],
-      offsets[segment + 1],
-      localProgress,
-    );
-    const thickness = (random() - 0.5) * (0.13 + random() * 0.2);
-    const localX = (centreLine + thickness) * bolt.width;
-    const localY = (0.5 - progress) * bolt.height;
-    const cos = Math.cos(bolt.rotation);
-    const sin = Math.sin(bolt.rotation);
-    let x = bolt.x + localX * cos - localY * sin;
-    let y = bolt.y + localX * sin + localY * cos;
-    let z = (random() - 0.5) * (0.42 + (1 - Math.abs(progress - 0.5) * 2) * 0.32);
+    const kind = random();
+    let x = 0;
+    let y = 0;
+    let z = 0;
 
-    // A small halo of fragments around every bolt avoids hard diagram-like
-    // silhouettes and keeps the final field alive between the main strikes.
-    if (random() > 0.84) {
-      const spark = 0.18 + random() * 0.44;
-      x += (random() - 0.5) * spark;
-      y += (random() - 0.5) * spark * 1.35;
-      z += (random() - 0.5) * 0.48;
+    if (kind < 0.3) {
+      // Chest piece: concentric 3D membrane and bright listening surface.
+      const angle = random() * TAU;
+      const ring = random() < 0.62;
+      const radius = ring ? 0.62 + (random() - 0.5) * 0.1 : Math.sqrt(random()) * 0.53;
+      x = -2.34 + Math.cos(angle) * radius;
+      y = -1.12 + Math.sin(angle) * radius;
+      z = (random() - 0.5) * (ring ? 0.26 : 0.42);
+    } else if (kind < 0.71) {
+      // Flexible tubing, split asymmetrically into two earpieces.
+      const rightBranch = random() > 0.51;
+      const progress = random();
+      const point = rightBranch
+        ? cubic([-2.34, -0.5], [-2.2, 0.42], [-1.3, 0.48], [-0.92, 1.56], progress)
+        : cubic([-2.34, -0.5], [-2.58, 0.44], [-3.58, 0.38], [-3.92, 1.42], progress);
+      const width = 0.07 + Math.sin(progress * Math.PI) * 0.055;
+      x = point[0] + (random() - 0.5) * width;
+      y = point[1] + (random() - 0.5) * width;
+      z = Math.sin(progress * Math.PI) * (rightBranch ? 0.42 : -0.38) + (random() - 0.5) * 0.16;
+    } else if (kind < 0.86) {
+      const right = random() > 0.5;
+      const angle = THREE.MathUtils.lerp(right ? -0.15 : Math.PI + 0.1, right ? Math.PI * 1.18 : Math.PI * 2.15, random());
+      const centerX = right ? -0.74 : -4.08;
+      x = centerX + Math.cos(angle) * 0.38 + (random() - 0.5) * 0.06;
+      y = 1.56 + Math.sin(angle) * 0.3 + (random() - 0.5) * 0.06;
+      z = (right ? 0.34 : -0.32) + (random() - 0.5) * 0.18;
+    } else {
+      // A faint ECG line passes through the stethoscope as a final living
+      // signal, keeping the surrounding field active rather than empty.
+      const progress = random();
+      x = THREE.MathUtils.lerp(-5.15, 0.75, progress);
+      const phase = (progress * 2.55) % 1;
+      const gaussian = (value: number, center: number, width: number) =>
+        Math.exp(-Math.pow((value - center) / width, 2));
+      y =
+        -0.08 +
+        gaussian(phase, 0.4, 0.016) * 0.9 -
+        gaussian(phase, 0.445, 0.026) * 0.33 +
+        (random() - 0.5) * 0.045;
+      z = -0.5 + (random() - 0.5) * 0.18;
     }
 
     data[i * 3] = x;
@@ -1102,64 +1140,138 @@ function makeEnergyHub(count: number, random: () => number) {
 }
 
 function makeAmbient(count: number, random: () => number) {
-  const data = makeCloud(count, random, 1.05);
+  const data = new Float32Array(count * 3);
+  const TAU = Math.PI * 2;
+  const center: [number, number, number] = [0.22, 0.02, 0];
+  const branches = [
+    { angle: -2.72, length: 2.2, lift: -0.32, depth: -0.46 },
+    { angle: -2.16, length: 2.5, lift: 0.24, depth: 0.34 },
+    { angle: -1.47, length: 2.05, lift: -0.18, depth: 0.48 },
+    { angle: -0.7, length: 2.36, lift: 0.34, depth: -0.32 },
+    { angle: 0.08, length: 2.2, lift: -0.24, depth: 0.38 },
+    { angle: 0.76, length: 2.34, lift: 0.3, depth: -0.4 },
+    { angle: 1.43, length: 2.02, lift: -0.22, depth: 0.44 },
+    { angle: 2.17, length: 2.5, lift: 0.28, depth: -0.38 },
+    { angle: 2.78, length: 2.15, lift: -0.26, depth: 0.32 },
+  ];
+
   for (let i = 0; i < count; i += 1) {
-    const centralSignal = random() < 0.29;
-    if (centralSignal) {
-      const y = (random() - 0.5) * 3.9;
-      const helixPart = random();
-      const phase = y * 1.35;
-      if (helixPart < 0.76) {
-        const strandPhase = phase + (helixPart < 0.38 ? 0 : Math.PI);
-        data[i * 3] = Math.sin(strandPhase) * 0.52 + (random() - 0.5) * 0.13;
-        data[i * 3 + 2] = Math.cos(strandPhase) * 0.72 + (random() - 0.5) * 0.18;
-      } else {
-        const rungProgress = random();
-        const fromX = Math.sin(phase) * 0.52;
-        const fromZ = Math.cos(phase) * 0.72;
-        data[i * 3] = THREE.MathUtils.lerp(fromX, -fromX, rungProgress) + (random() - 0.5) * 0.08;
-        data[i * 3 + 2] = THREE.MathUtils.lerp(fromZ, -fromZ, rungProgress) + (random() - 0.5) * 0.08;
-      }
-      data[i * 3 + 1] = y;
-      continue;
+    const kind = random();
+    let x = center[0];
+    let y = center[1];
+    let z = center[2];
+
+    if (kind < 0.24) {
+      // Volumetric neural soma: a softly faceted clinical signal core.
+      const theta = random() * TAU;
+      const phi = Math.acos(2 * random() - 1);
+      const radius = 0.42 + Math.pow(random(), 0.52) * 0.42;
+      x += Math.cos(theta) * Math.sin(phi) * radius;
+      y += Math.cos(phi) * radius * 0.9;
+      z += Math.sin(theta) * Math.sin(phi) * radius * 0.86;
+    } else if (kind < 0.84) {
+      // Dendrites use curved, narrowing particle ribbons instead of a
+      // screen-filling random cloud, preserving the nearby clinical copy.
+      const branch = branches[Math.floor(random() * branches.length)];
+      const progress = Math.pow(random(), 0.82);
+      const curve = Math.sin(progress * Math.PI);
+      const tangentX = Math.cos(branch.angle);
+      const tangentY = Math.sin(branch.angle);
+      const normalX = -tangentY;
+      const normalY = tangentX;
+      const width = (0.11 + curve * 0.12) * (1 - progress * 0.72);
+      const fork = progress > 0.62 && random() < 0.42 ? (progress - 0.62) * (random() > 0.5 ? 1 : -1) : 0;
+      x +=
+        tangentX * branch.length * progress +
+        normalX * (curve * branch.lift + fork * 0.8) +
+        (random() - 0.5) * width;
+      y +=
+        tangentY * branch.length * progress +
+        normalY * (curve * branch.lift + fork * 0.8) +
+        (random() - 0.5) * width;
+      z +=
+        Math.sin(progress * Math.PI * 1.35) * branch.depth +
+        fork * 0.34 +
+        (random() - 0.5) * width * 1.7;
+    } else {
+      // Synaptic halos sit at branch endings and give the neural object clear
+      // medical readouts without adding separate CSS circles.
+      const branch = branches[Math.floor(random() * branches.length)];
+      const haloAngle = random() * TAU;
+      const haloRadius = 0.12 + random() * 0.22;
+      const endX = center[0] + Math.cos(branch.angle) * branch.length;
+      const endY = center[1] + Math.sin(branch.angle) * branch.length;
+      x = endX + Math.cos(haloAngle) * haloRadius;
+      y = endY + Math.sin(haloAngle) * haloRadius * 0.78;
+      z = branch.depth * 0.18 + Math.sin(haloAngle) * haloRadius * 0.72;
     }
-    const quietCenter = Math.abs(data[i * 3]) < 1.35 && Math.abs(data[i * 3 + 1]) < 1.55;
-    if (quietCenter) {
-      data[i * 3] += data[i * 3] > 0 ? 1.15 : -1.15;
-    }
-    data[i * 3 + 2] *= 0.55;
+
+    data[i * 3] = x;
+    data[i * 3 + 1] = y;
+    data[i * 3 + 2] = z;
   }
   return data;
 }
 
 function makeInvestors(count: number, random: () => number) {
   const data = new Float32Array(count * 3);
-  const core = [-1.65, 0.02, 0];
   const TAU = Math.PI * 2;
+  const nodes: Array<[number, number, number]> = [
+    [-4.48, 1.24, -0.34],
+    [-3.12, 0.46, 0.28],
+    [-4.04, -1.3, -0.22],
+    [-1.82, -0.72, 0.38],
+    [-1.02, 0.9, -0.16],
+  ];
+  const connections: Array<[number, number, number]> = [
+    [0, 1, 0.34],
+    [1, 2, -0.42],
+    [1, 3, 0.38],
+    [3, 4, -0.34],
+    [0, 4, -0.24],
+  ];
 
   for (let i = 0; i < count; i += 1) {
     const kind = random();
-    const angle = random() * TAU;
-    let x: number;
-    let y: number;
-    let z: number;
+    let x = 0;
+    let y = 0;
+    let z = 0;
 
-    if (kind < 0.68) {
-      // The primary axis is made only from particles: no CSS line, planet dot
-      // or separate glowing sphere can break the visual language.
-      const ribbon = (random() - 0.5) * 0.17;
-      const depthBand = (random() - 0.5) * 0.2;
-      x = core[0] + Math.cos(angle) * (3.2 + ribbon);
-      y = core[1] + Math.sin(angle) * (1.3 + ribbon * 0.4);
-      z = Math.sin(angle - 0.35) * 0.62 + depthBand;
+    if (kind < 0.62) {
+      // Curved particle pathways connect five care disciplines. The particles
+      // themselves form the route, so there is no artificial orbit line.
+      const connection = connections[Math.floor(random() * connections.length)];
+      const from = nodes[connection[0]];
+      const to = nodes[connection[1]];
+      const progress = random();
+      const inverse = 1 - progress;
+      const middleX = (from[0] + to[0]) * 0.5;
+      const middleY = (from[1] + to[1]) * 0.5 + connection[2];
+      const width = 0.035 + Math.sin(progress * Math.PI) * 0.06;
+      x = inverse * inverse * from[0] + 2 * inverse * progress * middleX + progress * progress * to[0];
+      y = inverse * inverse * from[1] + 2 * inverse * progress * middleY + progress * progress * to[1];
+      z =
+        THREE.MathUtils.lerp(from[2], to[2], progress) +
+        Math.sin(progress * Math.PI) * connection[2] * 0.72 +
+        (random() - 0.5) * width * 2.1;
+      x += (random() - 0.5) * width;
+      y += (random() - 0.5) * width;
+    } else if (kind < 0.9) {
+      // Membrane-like node volumes represent departments collaborating around
+      // one patient pathway.
+      const node = nodes[Math.floor(random() * nodes.length)];
+      const theta = random() * TAU;
+      const phi = Math.acos(2 * random() - 1);
+      const radius = 0.19 + Math.pow(random(), 0.58) * 0.27;
+      x = node[0] + Math.cos(theta) * Math.sin(phi) * radius;
+      y = node[1] + Math.cos(phi) * radius * 0.78;
+      z = node[2] + Math.sin(theta) * Math.sin(phi) * radius;
     } else {
-      // Background stars fill the left visual field and resolve into the same
-      // orbital axis as the section settles.
-      const starAngle = random() * TAU;
-      const radius = 0.9 + Math.pow(random(), 0.62) * 3.35;
-      x = core[0] + Math.cos(starAngle) * radius * (0.86 + random() * 0.24);
-      y = core[1] + Math.sin(starAngle) * radius * 0.46 + (random() - 0.5) * 0.34;
-      z = (random() - 0.5) * 2.65 + Math.sin(starAngle * 1.5) * 0.24;
+      // Sparse signal cells keep the negative space alive without competing
+      // with the large copy on the right side of the section.
+      x = -4.85 + random() * 4.25;
+      y = -1.8 + random() * 3.6;
+      z = (random() - 0.5) * 1.45;
     }
 
     data[i * 3] = x;
@@ -1196,20 +1308,20 @@ export default function WebGLMorphScene() {
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const mobile = window.innerWidth < 760;
     const lowCoreDevice = typeof navigator.hardwareConcurrency === "number" && navigator.hardwareConcurrency <= 4;
-    const count = reducedMotion ? 2200 : mobile ? 3900 : lowCoreDevice ? 5600 : 8600;
+    const count = reducedMotion ? 2400 : mobile ? 4300 : lowCoreDevice ? 6500 : 10400;
     const targets = makeTargets(count);
     const formCenters = [
-      new THREE.Vector3(0.18, 0, 0),
+      new THREE.Vector3(2.15, 0.05, 0),
       new THREE.Vector3(0, 0, 0),
       new THREE.Vector3(-1.85, 0.05, 0),
       new THREE.Vector3(1.78, 0, 0),
       new THREE.Vector3(-1.72, 0, 0),
-      new THREE.Vector3(0, 0, 0),
-      new THREE.Vector3(-1.62, 0.08, 0),
+      new THREE.Vector3(0.22, 0.02, 0),
+      new THREE.Vector3(-2.75, 0.04, 0),
       new THREE.Vector3(0, 0.04, 0),
-      new THREE.Vector3(-2, 0, 0),
+      new THREE.Vector3(-2.34, 0, 0),
     ];
-    const volumeStrengths = [1, 0, 0.82, 0.55, 0.25, 0, 0.48, 0.34, 0.42];
+    const volumeStrengths = [1, 0.06, 0.82, 0.55, 0.3, 0.46, 0.56, 0.34, 0.58];
     const random = mulberry32(7719);
 
     const scene = new THREE.Scene();

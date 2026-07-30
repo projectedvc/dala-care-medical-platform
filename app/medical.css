@@ -155,10 +155,33 @@
   text-shadow: 0 2px 36px rgba(0, 8, 10, 0.92);
 }
 
+.medical-site .team-copy {
+  background: transparent;
+  box-shadow: none;
+}
+
+.medical-site .team-copy::before {
+  content: "";
+  position: absolute;
+  inset: -18% -14% -18% -10%;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 35% 50%, rgba(3, 16, 17, 0.5), rgba(3, 16, 17, 0.18) 56%, transparent 82%);
+  filter: blur(18px);
+}
+
+.medical-site .team::before {
+  background:
+    radial-gradient(ellipse 39% 54% at 22% 46%, rgba(3, 16, 17, 0.34), rgba(3, 16, 17, 0.1) 58%, transparent 86%),
+    radial-gradient(ellipse 34% 48% at 82% 47%, rgba(3, 16, 17, 0.2), transparent 82%);
+}
+
 .medical-site .medical-signal::before,
 .medical-site .energy-system::before,
 .medical-site .investors::before {
-  background: radial-gradient(ellipse 48% 54% at 34% 50%, rgba(3, 16, 17, 0.12), rgba(3, 16, 17, 0.76) 72%, transparent 100%);
+  background:
+    radial-gradient(ellipse 48% 54% at 34% 50%, rgba(3, 16, 17, 0.08), rgba(3, 16, 17, 0.36) 68%, transparent 94%),
+    radial-gradient(circle at 72% 42%, rgba(53, 227, 211, 0.025), transparent 36rem);
 }
 
 .medical-site .portrait-frame {
@@ -187,7 +210,7 @@
 }
 
 .medical-site .connection.consultation {
-  min-height: 168vh;
+  min-height: 220vh;
   overflow: hidden;
 }
 
@@ -200,12 +223,12 @@
   background:
     radial-gradient(circle at 20% 40%, rgba(53, 227, 211, 0.08), transparent 22rem),
     radial-gradient(circle at 82% 62%, rgba(141, 124, 255, 0.08), transparent 25rem),
-    linear-gradient(180deg, rgba(3, 16, 17, 0.06), rgba(3, 16, 17, 0.44) 34%, rgba(3, 16, 17, 0.78) 90%);
+    linear-gradient(180deg, rgba(3, 16, 17, 0.02), rgba(3, 16, 17, 0.08) 38%, rgba(3, 16, 17, 0.5) 70%, rgba(3, 16, 17, 0.7) 100%);
 }
 
 .meeting-shell {
   position: absolute;
-  top: 13%;
+  top: 64%;
   right: 5.5vw;
   left: 5.5vw;
   z-index: 8;
@@ -610,11 +633,11 @@
   }
 
   .medical-site .connection.consultation {
-    min-height: 220svh;
+    min-height: 300svh;
   }
 
   .meeting-shell {
-    top: 12vh;
+    top: 108svh;
     right: 14px;
     left: 14px;
     min-height: 175svh;
