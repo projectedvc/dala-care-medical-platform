@@ -66,21 +66,21 @@ export default function LoginPage() {
 
       <aside className="auth-story">
         <div className="auth-story-top">
-          <span>Clinical intelligence</span>
-          <strong>01 / Connected care</strong>
+          <span>Patient digital twin</span>
+          <strong>01 / Whole-person view</strong>
         </div>
         <div className="auth-visual" aria-hidden="true">
-          <div className="auth-heart">+</div>
-          <i className="signal-ring ring-a" />
-          <i className="signal-ring ring-b" />
-          <i className="signal-ring ring-c" />
-          <span className="signal-node node-a">Vitals</span>
-          <span className="signal-node node-b">Labs</span>
-          <span className="signal-node node-c">Imaging</span>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/assets/clinical-human-v1.png" alt="" />
+          <i className="body-scan" />
+          <span className="signal-node node-a">Neural</span>
+          <span className="signal-node node-b">Cardiac</span>
+          <span className="signal-node node-c">Respiratory</span>
+          <span className="signal-node node-d">Longitudinal</span>
         </div>
         <div className="auth-story-copy">
-          <p>Every clinical signal becomes part of the same patient story.</p>
-          <span>Dala Care brings records, research and live care into one protected workspace for clinicians.</span>
+          <p>One person.<br />Every clinical signal.</p>
+          <span>A protected whole-person view brings records, research and live care into one clinical workspace.</span>
         </div>
       </aside>
 

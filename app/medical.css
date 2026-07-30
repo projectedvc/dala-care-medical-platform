@@ -210,7 +210,7 @@
 }
 
 .medical-site .connection.consultation {
-  min-height: 270vh;
+  min-height: 430vh;
   overflow: hidden;
 }
 
@@ -228,7 +228,7 @@
 
 .meeting-shell {
   position: absolute;
-  top: 71%;
+  top: 80%;
   right: 7vw;
   left: 7vw;
   z-index: 8;
@@ -241,56 +241,79 @@
   backdrop-filter: blur(22px);
 }
 
-.organ-atlas {
+.organ-readout {
   position: absolute;
-  inset: 0;
   z-index: 6;
-  pointer-events: none;
-  font-family: var(--mono);
-}
-
-.organ-label {
-  position: absolute;
   display: grid;
-  grid-template-columns: 7px auto;
-  align-items: center;
-  gap: 0 7px;
+  gap: 4px;
+  min-width: 170px;
+  padding: 11px 13px;
+  border-left: 1px solid rgba(110, 255, 239, 0.42);
   color: rgba(212, 255, 250, 0.72);
-  font-size: 8px;
-  letter-spacing: 0.11em;
+  background: linear-gradient(90deg, rgba(3, 19, 20, 0.82), rgba(3, 19, 20, 0.08));
+  font-family: var(--mono);
   text-transform: uppercase;
-  text-shadow: 0 0 18px rgba(53, 227, 211, 0.32);
+  pointer-events: none;
 }
 
-.organ-label::after {
-  content: "";
-  position: absolute;
-  top: 4px;
-  right: calc(100% + 8px);
-  width: clamp(20px, 3vw, 52px);
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(110, 255, 239, 0.46));
+.organ-readout span {
+  color: rgba(110, 255, 239, 0.64);
+  font-size: 7px;
+  letter-spacing: 0.11em;
 }
 
-.organ-label i {
-  grid-row: 1 / 3;
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: #6effef;
-  box-shadow: 0 0 12px rgba(110, 255, 239, 0.82);
+.organ-readout strong {
+  color: #e3fffc;
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.18em;
+  text-shadow: 0 0 20px rgba(53, 227, 211, 0.34);
 }
 
-.organ-label small {
+.organ-readout small {
   color: rgba(125, 164, 161, 0.58);
-  font-size: 5px;
+  font-size: 6px;
   letter-spacing: 0.12em;
 }
 
-.organ-brain { top: 30%; left: 23%; }
-.organ-lungs { top: 31%; left: 41%; }
-.organ-heart { top: 67%; left: 22%; }
-.organ-liver { top: 68%; left: 42%; }
+.organ-readout-left {
+  top: 71%;
+  left: clamp(24px, 21vw, 420px);
+}
+
+.organ-readout-right {
+  top: 70%;
+  right: clamp(24px, 21vw, 420px);
+}
+
+.hand-sequence-copy {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 5;
+  display: grid;
+  gap: 7px;
+  width: min(420px, 70vw);
+  color: rgba(190, 225, 222, 0.68);
+  text-align: center;
+  transform: translate(-50%, 38vh);
+  pointer-events: none;
+}
+
+.hand-sequence-copy span,
+.hand-sequence-copy small {
+  font-family: var(--mono);
+  font-size: 8px;
+  letter-spacing: 0.17em;
+  text-transform: uppercase;
+}
+
+.hand-sequence-copy strong {
+  color: #e9fffc;
+  font-size: clamp(30px, 3vw, 50px);
+  font-weight: 300;
+  letter-spacing: -0.05em;
+}
 
 .meeting-topbar {
   display: flex;
@@ -684,19 +707,24 @@
   }
 
   .medical-site .connection.consultation {
-    min-height: 340svh;
+    min-height: 500svh;
   }
 
   .meeting-shell {
-    top: 154svh;
+    top: 375svh;
     right: 14px;
     left: 14px;
     min-height: 175svh;
     border-radius: 18px;
   }
 
-  .organ-atlas {
+  .organ-readout {
     display: none;
+  }
+
+  .hand-sequence-copy {
+    top: 116svh;
+    transform: translateX(-50%);
   }
 
   .meeting-topbar {

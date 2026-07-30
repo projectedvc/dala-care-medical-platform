@@ -50,7 +50,9 @@ const VERTEX_SHADER = /* glsl */ `
     // Keeping this interval broad prevents a long hold followed by a snap.
     float bulbSegment = step(2.0, uStage) * (1.0 - step(3.0, uStage));
     float bulbMorph = easeInOut(clamp((uMorph - 0.04) / 0.92, 0.0, 1.0));
-    float orbitSegment = step(5.0, uStage) * (1.0 - step(6.0, uStage));
+    // The clinician DNA now morphs directly into the large liver target.
+    // Do not force this medical transition through the old orbital bridge.
+    float orbitSegment = 0.0;
     float orbitMorph = easeInOut(clamp((uMorph - 0.02) / 0.96, 0.0, 1.0));
     float hubSegment = step(7.0, uStage) * (1.0 - step(8.0, uStage));
     float hubMorph = easeInOut(clamp((uMorph - 0.02) / 0.96, 0.0, 1.0));
@@ -102,7 +104,7 @@ const VERTEX_SHADER = /* glsl */ `
     // from the glass instead of simply interpolating into the next silhouette.
     float bulbDeparture = smoothstep(2.08, 2.24, uStage)
       * (1.0 - smoothstep(2.8, 2.98, uStage));
-    vec3 bulbSource = aFrom - vec3(-1.85, 0.05, 0.0);
+    vec3 bulbSource = aFrom - vec3(-2.25, 0.02, 0.0);
     vec3 bulbBlastDirection = normalize(bulbSource + aRandom * 0.18 + vec3(0.0, 0.08, 0.12));
     center += bulbBlastDirection * bulbDeparture * pathArc * (0.12 + aSeed * 0.34);
 
@@ -111,33 +113,25 @@ const VERTEX_SHADER = /* glsl */ `
     // below supplies the cinematic left/right arrival and 3D turn.
 
     float turbineStage = smoothstep(2.68, 2.96, uStage) * (1.0 - smoothstep(3.2, 3.58, uStage));
-    vec3 turbineCenter = vec3(2.08, 0.0, 0.12);
-    float turbinePhase = 0.0;
-    if (center.z < -0.52 && center.y > 0.0) {
-      turbineCenter = vec3(3.82, 1.45, -1.15);
-      turbinePhase = 2.1;
-    } else if (center.z < -0.52) {
-      turbineCenter = vec3(3.88, -1.42, -1.28);
-      turbinePhase = 4.2;
-    }
+    vec3 turbineCenter = vec3(2.15, 0.0, 0.0);
     float turbineRadius = length(center - turbineCenter);
-    float turbineAngle = sin(uTime * 0.18 + turbinePhase) * 0.2 * uMotionStrength;
-    mat3 rotateTurbine = mat3(
-      cos(turbineAngle), -sin(turbineAngle), 0.0,
-      sin(turbineAngle), cos(turbineAngle), 0.0,
-      0.0, 0.0, 1.0
-    );
-    vec3 rotatedTurbine = turbineCenter + rotateTurbine * (center - turbineCenter);
-    center = mix(center, rotatedTurbine, turbineStage);
+    // The paired lungs breathe as one continuous volume. Keeping a single
+    // centre avoids the old three-part rotor logic tearing the organ apart.
+    vec3 lungLocal = center - turbineCenter;
+    float breath = sin(uTime * 0.58) * 0.026 * uMotionStrength * turbineStage;
+    lungLocal.x *= 1.0 + breath;
+    lungLocal.y *= 1.0 + breath * 0.34;
+    lungLocal.z *= 1.0 + breath * 0.72;
+    center = turbineCenter + lungLocal;
 
     float atomStage = smoothstep(3.62, 3.94, uStage) * (1.0 - smoothstep(4.12, 4.48, uStage));
-    vec3 mainAtomCenter = vec3(-2.48, 0.0, 0.0);
-    vec3 upperAtomCenter = vec3(-0.9, 1.27, -0.42);
-    vec3 lowerAtomCenter = vec3(-0.78, -1.27, 0.38);
+    vec3 mainAtomCenter = vec3(-2.25, 0.0, 0.0);
+    vec3 upperAtomCenter = mainAtomCenter;
+    vec3 lowerAtomCenter = mainAtomCenter;
     float mainDistance = distance(center, mainAtomCenter);
     float upperDistance = distance(center, upperAtomCenter);
     float lowerDistance = distance(center, lowerAtomCenter);
-    float atomForeground = 1.0 - step(1.78, min(mainDistance, min(upperDistance, lowerDistance)));
+    float atomForeground = 1.0 - step(2.72, min(mainDistance, min(upperDistance, lowerDistance)));
     vec3 atomCenter = mainAtomCenter;
     float atomPhase = 0.0;
     if (upperDistance < mainDistance && upperDistance < lowerDistance) {
@@ -164,7 +158,7 @@ const VERTEX_SHADER = /* glsl */ `
 
     // The single particle axis only tilts slightly with scroll.
     float investorMotionStage = smoothstep(5.7, 5.96, uStage) * (1.0 - smoothstep(6.34, 6.72, uStage));
-    vec3 investorCenter = vec3(-1.65, 0.02, 0.0);
+    vec3 investorCenter = vec3(-2.3, 0.02, 0.0);
     float investorTilt = sin(uScrollPhase * 0.45) * 0.12 * uMotionStrength;
     mat3 rotateInvestorY = mat3(
       cos(investorTilt), 0.0, sin(investorTilt),
@@ -438,7 +432,7 @@ const VERTEX_SHADER = /* glsl */ `
     // The filament is white at rest. During the first part of the next scroll
     // the shell ignites, then immediately starts feeding the turbine form.
     float bulbStage = smoothstep(1.34, 1.8, uStage) * (1.0 - smoothstep(2.66, 2.94, uStage));
-    vec3 bulbLocal = center - vec3(-1.85, 0.05, 0.0);
+    vec3 bulbLocal = center - vec3(-2.25, 0.02, 0.0);
     float bulbHead = smoothstep(-0.58, -0.08, bulbLocal.y);
     float bulbCore = bulbStage * bulbHead
       * (1.0 - smoothstep(0.16, 0.68, length(vec3(bulbLocal.x, bulbLocal.y - 0.4, bulbLocal.z))));
@@ -791,141 +785,169 @@ function makeCloud(count: number, random: () => number, spread = 1) {
   return data;
 }
 
-function makeBulb(count: number, random: () => number) {
+function makeHeart(count: number, random: () => number) {
   const data = new Float32Array(count * 3);
-  for (let i = 0; i < count; i += 1) {
-    const angle = random() * Math.PI * 2;
-    const shell = random() > 0.28;
-    const fill = shell ? 0.86 + random() * 0.15 : Math.sqrt(random()) * 0.84;
-    const anatomicalLean = 0.12;
-    const rawX = 16 * Math.pow(Math.sin(angle), 3);
-    const rawY =
-      13 * Math.cos(angle) -
-      5 * Math.cos(2 * angle) -
-      2 * Math.cos(3 * angle) -
-      Math.cos(4 * angle);
-    let x = rawX * 0.066 * fill;
-    let y = rawY * 0.071 * fill;
-    x += y * anatomicalLean;
-    y += 0.12;
-
-    if (random() > 0.9) {
-      const vessel = random() < 0.5 ? -1 : 1;
-      const progress = random();
-      x = vessel * (0.18 + progress * 0.24) + (random() - 0.5) * 0.08;
-      y = 0.72 + progress * 0.76 + (random() - 0.5) * 0.08;
-    }
-
-    data[i * 3] = -1.85 + x;
-    data[i * 3 + 1] = 0.05 + y;
-    const heartRadius = Math.min(1, Math.sqrt(x * x + (y - 0.12) ** 2) / 1.18);
-    const heartDepth = 0.22 + 0.88 * Math.sqrt(Math.max(0.05, 1 - heartRadius * heartRadius));
-    data[i * 3 + 2] = (random() - 0.5) * heartDepth;
-  }
-  return data;
-}
-
-function makeTurbine(count: number, random: () => number) {
-  const data = new Float32Array(count * 3);
-  const center = { x: 2.08, y: 0, z: 0.12 };
+  const centerX = -2.25;
+  const centerY = 0.02;
   for (let i = 0; i < count; i += 1) {
     const kind = random();
-    const y = (random() - 0.5) * 4.8;
-    const phase = y * 1.56;
-    let x: number;
-    let z: number;
-
-    if (kind < 0.64) {
-      const strand = kind < 0.32 ? 0 : Math.PI;
-      x = Math.sin(phase + strand) * 0.78 + (random() - 0.5) * 0.1;
-      z = Math.cos(phase + strand) * 0.92 + (random() - 0.5) * 0.12;
-    } else if (kind < 0.87) {
-      const progress = random();
-      const fromX = Math.sin(phase) * 0.78;
-      const fromZ = Math.cos(phase) * 0.92;
-      x = THREE.MathUtils.lerp(fromX, -fromX, progress) + (random() - 0.5) * 0.07;
-      z = THREE.MathUtils.lerp(fromZ, -fromZ, progress) + (random() - 0.5) * 0.08;
-    } else {
-      const halo = random() * Math.PI * 2;
-      const radius = 1.05 + random() * 1.55;
-      x = Math.cos(halo) * radius + (random() - 0.5) * 0.22;
-      z = Math.sin(halo) * radius * 0.72 + (random() - 0.5) * 0.22;
-    }
-
-    data[i * 3] = center.x + x;
-    data[i * 3 + 1] = center.y + y;
-    data[i * 3 + 2] = center.z + z;
-  }
-  return data;
-}
-
-function makeAtom(count: number, random: () => number) {
-  const data = new Float32Array(count * 3);
-  const TAU = Math.PI * 2;
-
-  for (let i = 0; i < count; i += 1) {
-    const organ = random();
     let x = 0;
     let y = 0;
     let z = 0;
 
-    if (organ < 0.26) {
-      // Brain: two volumetric hemispheres with a modulated shell for gyri.
-      const side = random() < 0.5 ? -1 : 1;
-      const theta = random() * TAU;
-      const phi = Math.acos(2 * random() - 1);
-      const gyri =
-        1 +
-        Math.sin(theta * 7 + phi * 4) * 0.075 +
-        Math.sin(theta * 3 - phi * 9) * 0.045;
-      const shell = (random() < 0.84 ? 0.91 + random() * 0.12 : Math.cbrt(random()) * 0.86) * gyri;
-      x = -3.28 + side * 0.28 + Math.cos(theta) * Math.sin(phi) * 0.54 * shell;
-      y = 1.18 + Math.cos(phi) * 0.66 * shell;
-      z = Math.sin(theta) * Math.sin(phi) * 0.5 * shell;
-    } else if (organ < 0.57) {
-      // Lungs: paired tapered lobes and a central branching airway.
-      if (random() < 0.84) {
-        const side = random() < 0.5 ? -1 : 1;
-        const theta = random() * TAU;
-        const phi = Math.acos(2 * random() - 1);
-        const vertical = Math.cos(phi);
-        const taper = 0.72 + (vertical + 1) * 0.14;
-        const shell = random() < 0.82 ? 0.9 + random() * 0.12 : Math.cbrt(random()) * 0.86;
-        x = -1.46 + side * 0.38 + Math.cos(theta) * Math.sin(phi) * 0.36 * taper * shell;
-        y = 1.03 + vertical * 0.78 * shell;
-        z = Math.sin(theta) * Math.sin(phi) * 0.42 * shell;
-      } else {
-        const branch = random() < 0.54 ? -1 : 1;
-        const progress = random();
-        x = -1.46 + branch * progress * 0.41 + (random() - 0.5) * 0.045;
-        y = 1.76 - progress * 0.63 + (random() - 0.5) * 0.045;
-        z = 0.09 + (random() - 0.5) * 0.06;
-      }
-    } else if (organ < 0.79) {
-      // Heart: a filled anatomical heart with real depth.
-      const angle = random() * TAU;
-      const fill = random() < 0.82 ? 0.82 + random() * 0.2 : Math.sqrt(random()) * 0.78;
+    if (kind < 0.79) {
+      const angle = random() * Math.PI * 2;
+      const shell = random() < 0.78 ? 0.88 + random() * 0.15 : Math.sqrt(random()) * 0.86;
       const rawX = 16 * Math.pow(Math.sin(angle), 3);
       const rawY =
         13 * Math.cos(angle) -
         5 * Math.cos(2 * angle) -
         2 * Math.cos(3 * angle) -
         Math.cos(4 * angle);
-      x = -3.25 + rawX * 0.031 * fill + rawY * 0.003;
-      y = -1.15 + rawY * 0.033 * fill;
-      z = (random() - 0.5) * (0.3 + 0.42 * (1 - fill * 0.42));
+      x = rawX * 0.103 * shell + rawY * 0.012;
+      y = rawY * 0.108 * shell - 0.05;
+      const radius = Math.min(1, Math.sqrt((x / 1.75) ** 2 + (y / 2.0) ** 2));
+      const depth = 0.3 + 1.32 * Math.sqrt(Math.max(0.025, 1 - radius * radius));
+      z = (random() - 0.5) * depth;
+      // Chamber separation keeps the object anatomical instead of reading as
+      // a flat valentine icon.
+      z += Math.sin(angle * 2.0) * 0.14;
+    } else if (kind < 0.94) {
+      const vessel = random();
+      const progress = random();
+      const arch = Math.sin(progress * Math.PI);
+      if (vessel < 0.68) {
+        // Curved ascending aorta and arch. The bend removes the previous
+        // rabbit-ear silhouette while retaining an unmistakable vessel crown.
+        x = 0.08 - progress * 0.42 - arch * 0.58;
+        y = 1.0 + progress * 0.78 + arch * 0.58;
+        z = 0.1 + arch * 0.52;
+      } else {
+        // Shorter pulmonary trunk exits on a different depth plane.
+        x = 0.17 + progress * 0.72;
+        y = 0.95 + progress * 0.78 - arch * 0.08;
+        z = -0.18 - arch * 0.32;
+      }
+      const halo = random() * Math.PI * 2;
+      const thickness = 0.075 + progress * 0.045;
+      x += Math.cos(halo) * thickness;
+      z += Math.sin(halo) * thickness;
     } else {
-      // Liver: a broad asymmetric lobe with a curved lower edge.
-      const theta = random() * TAU;
-      const phi = Math.acos(2 * random() - 1);
-      const shell = random() < 0.83 ? 0.9 + random() * 0.13 : Math.cbrt(random()) * 0.86;
-      const asymmetry = Math.cos(theta) > 0 ? 1 : 0.76;
-      x = -1.45 + Math.cos(theta) * Math.sin(phi) * 0.84 * asymmetry * shell;
-      y = -1.17 + Math.cos(phi) * 0.43 * shell - Math.max(0, x + 1.15) * 0.11;
-      z = Math.sin(theta) * Math.sin(phi) * 0.48 * shell;
+      const angle = random() * Math.PI * 2;
+      const radius = 1.88 + random() * 0.22;
+      x = Math.cos(angle) * radius;
+      y = Math.sin(angle) * radius * 0.78 + 0.05;
+      z = (random() - 0.5) * 1.35;
     }
 
-    data[i * 3] = x;
+    data[i * 3] = centerX + x;
+    data[i * 3 + 1] = centerY + y;
+    data[i * 3 + 2] = z;
+  }
+  return data;
+}
+
+function makeLungs(count: number, random: () => number) {
+  const data = new Float32Array(count * 3);
+  const centerX = 2.15;
+  for (let i = 0; i < count; i += 1) {
+    const kind = random();
+    let x = 0;
+    let y = 0;
+    let z = 0;
+
+    if (kind < 0.76) {
+      const side = random() < 0.5 ? -1 : 1;
+      const vertical = random() * 2 - 1;
+      const theta = random() * Math.PI * 2;
+      const shell = random() < 0.8 ? 0.9 + random() * 0.12 : Math.cbrt(random()) * 0.88;
+      const taper = Math.sqrt(Math.max(0.04, 1 - vertical * vertical));
+      const upperNarrow = 0.72 + (1 - vertical) * 0.14;
+      const lobe = 0.91 + Math.sin((vertical + 1) * Math.PI * 2.5) * 0.045;
+      x = side * (0.93 + Math.cos(theta) * taper * 0.74 * upperNarrow * lobe * shell);
+      y = vertical * 1.9 * shell - 0.02;
+      z = Math.sin(theta) * taper * 0.86 * shell;
+      // The medial notch near the heart separates the two lungs.
+      if (side > 0 && x < 0.85 && y < 0.55 && y > -0.75) x += 0.2;
+    } else if (kind < 0.95) {
+      const side = random() < 0.5 ? -1 : 1;
+      const branchDepth = Math.floor(random() * 4);
+      const progress = random();
+      const branchScale = 1 - branchDepth * 0.16;
+      x = side * (0.08 + progress * (0.72 + branchDepth * 0.2));
+      y = 1.85 - progress * (1.05 + branchDepth * 0.52);
+      z = side * 0.04 + Math.sin(progress * Math.PI) * (branchDepth % 2 === 0 ? 0.34 : -0.34);
+      const halo = random() * Math.PI * 2;
+      const thickness = 0.055 * branchScale;
+      x += Math.cos(halo) * thickness;
+      z += Math.sin(halo) * thickness;
+    } else {
+      const progress = random();
+      const halo = random() * Math.PI * 2;
+      x = Math.cos(halo) * 0.11;
+      y = 2.0 + progress * 0.84;
+      z = Math.sin(halo) * 0.11;
+    }
+
+    data[i * 3] = centerX + x;
+    data[i * 3 + 1] = y;
+    data[i * 3 + 2] = z;
+  }
+  return data;
+}
+
+function makeBrain(count: number, random: () => number) {
+  const data = new Float32Array(count * 3);
+  const TAU = Math.PI * 2;
+  const centerX = -2.25;
+
+  for (let i = 0; i < count; i += 1) {
+    const kind = random();
+    let x = 0;
+    let y = 0;
+    let z = 0;
+
+    if (kind < 0.73) {
+      const side = random() < 0.5 ? -1 : 1;
+      const theta = random() * TAU;
+      const phi = Math.acos(2 * random() - 1);
+      const gyri =
+        1 +
+        Math.sin(theta * 9 + phi * 5) * 0.07 +
+        Math.sin(theta * 4 - phi * 12) * 0.05;
+      const shell = (random() < 0.86 ? 0.9 + random() * 0.13 : Math.cbrt(random()) * 0.88) * gyri;
+      x = side * 0.58 + Math.cos(theta) * Math.sin(phi) * 1.28 * shell;
+      y = 0.18 + Math.cos(phi) * 1.02 * shell;
+      z = Math.sin(theta) * Math.sin(phi) * 0.9 * shell;
+    } else if (kind < 0.89) {
+      // Brighter cortical ribbons trace several independent gyri across both
+      // hemispheres, adding readable anatomical detail at landing-page scale.
+      const side = random() < 0.5 ? -1 : 1;
+      const band = Math.floor(random() * 5);
+      const progress = random();
+      const theta = progress * TAU + band * 0.71;
+      const latitude = -0.72 + band * 0.36 + Math.sin(theta * 2.2) * 0.13;
+      const rim = Math.sqrt(Math.max(0.08, 1 - latitude * latitude));
+      x = side * 0.58 + Math.cos(theta) * 1.3 * rim;
+      y = 0.18 + latitude * 1.02;
+      z = Math.sin(theta) * 0.92 * rim + (random() - 0.5) * 0.08;
+    } else if (kind < 0.97) {
+      // Cerebellum.
+      const theta = random() * TAU;
+      const phi = Math.acos(2 * random() - 1);
+      const shell = random() < 0.84 ? 0.9 + random() * 0.12 : Math.cbrt(random()) * 0.86;
+      x = 0.52 + Math.cos(theta) * Math.sin(phi) * 0.72 * shell;
+      y = -0.72 + Math.cos(phi) * 0.43 * shell;
+      z = -0.48 + Math.sin(theta) * Math.sin(phi) * 0.58 * shell;
+    } else {
+      const progress = random();
+      const halo = random() * TAU;
+      x = 0.3 + Math.cos(halo) * 0.18 * (1 - progress * 0.5);
+      y = -0.78 - progress * 0.78;
+      z = -0.24 + Math.sin(halo) * 0.18 * (1 - progress * 0.5);
+    }
+
+    data[i * 3] = centerX + x;
     data[i * 3 + 1] = y;
     data[i * 3 + 2] = z;
   }
@@ -1247,65 +1269,37 @@ function makeAmbient(count: number, random: () => number) {
   return data;
 }
 
-function makeInvestors(count: number, random: () => number) {
+function makeLiver(count: number, random: () => number) {
   const data = new Float32Array(count * 3);
   const TAU = Math.PI * 2;
-  const nodes: Array<[number, number, number]> = [
-    [-4.48, 1.24, -0.34],
-    [-3.12, 0.46, 0.28],
-    [-4.04, -1.3, -0.22],
-    [-1.82, -0.72, 0.38],
-    [-1.02, 0.9, -0.16],
-  ];
-  const connections: Array<[number, number, number]> = [
-    [0, 1, 0.34],
-    [1, 2, -0.42],
-    [1, 3, 0.38],
-    [3, 4, -0.34],
-    [0, 4, -0.24],
-  ];
-
   for (let i = 0; i < count; i += 1) {
     const kind = random();
     let x = 0;
     let y = 0;
     let z = 0;
 
-    if (kind < 0.62) {
-      // Curved particle pathways connect five care disciplines. The particles
-      // themselves form the route, so there is no artificial orbit line.
-      const connection = connections[Math.floor(random() * connections.length)];
-      const from = nodes[connection[0]];
-      const to = nodes[connection[1]];
-      const progress = random();
-      const inverse = 1 - progress;
-      const middleX = (from[0] + to[0]) * 0.5;
-      const middleY = (from[1] + to[1]) * 0.5 + connection[2];
-      const width = 0.035 + Math.sin(progress * Math.PI) * 0.06;
-      x = inverse * inverse * from[0] + 2 * inverse * progress * middleX + progress * progress * to[0];
-      y = inverse * inverse * from[1] + 2 * inverse * progress * middleY + progress * progress * to[1];
-      z =
-        THREE.MathUtils.lerp(from[2], to[2], progress) +
-        Math.sin(progress * Math.PI) * connection[2] * 0.72 +
-        (random() - 0.5) * width * 2.1;
-      x += (random() - 0.5) * width;
-      y += (random() - 0.5) * width;
-    } else if (kind < 0.9) {
-      // Membrane-like node volumes represent departments collaborating around
-      // one patient pathway.
-      const node = nodes[Math.floor(random() * nodes.length)];
+    if (kind < 0.86) {
       const theta = random() * TAU;
       const phi = Math.acos(2 * random() - 1);
-      const radius = 0.19 + Math.pow(random(), 0.58) * 0.27;
-      x = node[0] + Math.cos(theta) * Math.sin(phi) * radius;
-      y = node[1] + Math.cos(phi) * radius * 0.78;
-      z = node[2] + Math.sin(theta) * Math.sin(phi) * radius;
+      const shell = random() < 0.82 ? 0.9 + random() * 0.12 : Math.cbrt(random()) * 0.88;
+      const asymmetry = Math.cos(theta) > 0 ? 1 : 0.72;
+      x = -2.3 + Math.cos(theta) * Math.sin(phi) * 2.15 * asymmetry * shell;
+      y = 0.08 + Math.cos(phi) * 1.28 * shell - Math.max(0, x + 1.8) * 0.12;
+      z = Math.sin(theta) * Math.sin(phi) * 1.0 * shell;
+      // Flatten the superior surface and curve the inferior edge.
+      y = Math.min(y, 0.95 + Math.sin(theta) * 0.08);
+    } else if (kind < 0.96) {
+      const branch = random() < 0.5 ? -1 : 1;
+      const progress = random();
+      const halo = random() * TAU;
+      x = -2.35 + branch * progress * 1.22 + Math.cos(halo) * 0.06;
+      y = -0.1 + Math.sin(progress * Math.PI) * 0.5 - progress * 0.62 + Math.sin(halo) * 0.06;
+      z = 0.74 - progress * 0.36;
     } else {
-      // Sparse signal cells keep the negative space alive without competing
-      // with the large copy on the right side of the section.
-      x = -4.85 + random() * 4.25;
-      y = -1.8 + random() * 3.6;
-      z = (random() - 0.5) * 1.45;
+      const angle = random() * TAU;
+      x = -2.25 + Math.cos(angle) * (2.35 + random() * 0.24);
+      y = Math.sin(angle) * (1.32 + random() * 0.14);
+      z = (random() - 0.5) * 1.2;
     }
 
     data[i * 3] = x;
@@ -1320,11 +1314,11 @@ function makeTargets(count: number): TargetSet {
   return [
     makeEnergyGenerator(count, random),
     makeCloud(count, random),
-    makeBulb(count, random),
-    makeTurbine(count, random),
-    makeAtom(count, random),
+    makeHeart(count, random),
+    makeLungs(count, random),
+    makeBrain(count, random),
     makeAmbient(count, random),
-    makeInvestors(count, random),
+    makeLiver(count, random),
     makeHands(count, random),
     makeEnergyHub(count, random),
   ];
@@ -1347,15 +1341,15 @@ export default function WebGLMorphScene() {
     const formCenters = [
       new THREE.Vector3(2.15, 0.05, 0),
       new THREE.Vector3(0, 0, 0),
-      new THREE.Vector3(-1.85, 0.05, 0),
-      new THREE.Vector3(1.78, 0, 0),
-      new THREE.Vector3(-2.32, 0, 0),
+      new THREE.Vector3(-2.25, 0.02, 0),
+      new THREE.Vector3(2.15, 0, 0),
+      new THREE.Vector3(-2.25, 0, 0),
       new THREE.Vector3(0.22, 0.02, 0),
-      new THREE.Vector3(-2.75, 0.04, 0),
+      new THREE.Vector3(-2.3, 0.04, 0),
       new THREE.Vector3(0, 0.04, 0),
       new THREE.Vector3(-2.34, 0, 0),
     ];
-    const volumeStrengths = [1, 0.06, 0.82, 0.55, 0.74, 0.46, 0.56, 0.34, 0.58];
+    const volumeStrengths = [1, 0.06, 0.94, 0.9, 0.96, 0.46, 0.9, 0.34, 0.58];
     const random = mulberry32(7719);
 
     const scene = new THREE.Scene();
@@ -1623,7 +1617,13 @@ export default function WebGLMorphScene() {
         );
         handParticles.scale.set(handScaleX, 1.04, 1);
       }
-      anchors = sections.map((section) => section.offsetTop + section.offsetHeight * 0.5);
+      anchors = sections.map((section) => {
+        const requestedRatio = Number(section.dataset.particleAnchor ?? 0.5);
+        const ratio = Number.isFinite(requestedRatio)
+          ? THREE.MathUtils.clamp(requestedRatio, 0.08, 0.92)
+          : 0.5;
+        return section.offsetTop + section.offsetHeight * ratio;
+      });
     };
 
     const updateScroll = () => {

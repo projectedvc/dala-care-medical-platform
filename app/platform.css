@@ -40,7 +40,7 @@
 .auth-page {
   position: relative;
   display: grid;
-  grid-template-columns: minmax(380px, 0.82fr) minmax(520px, 1.18fr);
+  grid-template-columns: minmax(560px, 1.3fr) minmax(430px, 0.7fr);
   min-height: 100svh;
   overflow: hidden;
   background:
@@ -90,6 +90,8 @@
 
 .auth-card {
   position: relative;
+  grid-column: 2;
+  grid-row: 1;
   z-index: 3;
   align-self: center;
   width: min(450px, calc(100% - 72px));
@@ -298,10 +300,13 @@
 
 .auth-story {
   position: relative;
+  grid-column: 1;
+  grid-row: 1;
   z-index: 2;
   min-height: 100svh;
   overflow: hidden;
-  border-left: 1px solid var(--portal-line);
+  border-right: 1px solid var(--portal-line);
+  border-left: 0;
   background:
     radial-gradient(circle at 49% 46%, rgba(91, 224, 213, 0.12), transparent 9rem),
     linear-gradient(135deg, rgba(7, 28, 30, 0.34), rgba(2, 13, 15, 0.74));
@@ -335,44 +340,72 @@
 
 .auth-visual {
   position: absolute;
-  top: 45%;
-  left: 50%;
-  width: min(39vw, 580px);
-  aspect-ratio: 1;
+  top: 49%;
+  left: 48%;
+  width: min(48vw, 860px);
+  height: 90svh;
   transform: translate(-50%, -50%);
 }
 
-.auth-heart {
+.auth-visual img {
   position: absolute;
-  top: 50%;
+  top: 52%;
   left: 50%;
-  z-index: 4;
-  display: grid;
-  place-items: center;
-  width: 86px;
-  height: 86px;
-  border: 1px solid rgba(184, 255, 247, 0.32);
-  border-radius: 42% 58% 55% 45%;
-  color: #d8fffb;
-  background: radial-gradient(circle, rgba(184, 255, 247, 0.19), rgba(54, 225, 211, 0.055) 52%, transparent 70%);
-  box-shadow: 0 0 50px rgba(54, 225, 211, 0.15);
-  font-size: 34px;
-  transform: translate(-50%, -50%) rotate(-8deg);
-  animation: auth-heartbeat 3s ease-in-out infinite;
+  width: min(94%, 760px);
+  height: 94%;
+  object-fit: contain;
+  object-position: center;
+  mix-blend-mode: screen;
+  filter: saturate(0.86) contrast(1.08) brightness(0.94) drop-shadow(0 0 36px rgba(84, 238, 226, 0.13));
+  transform: translate(-50%, -50%);
+  animation: auth-body-breathe 6s ease-in-out infinite;
 }
 
-.signal-ring {
+.auth-visual::before,
+.auth-visual::after {
+  content: "";
   position: absolute;
   top: 50%;
   left: 50%;
-  border: 1px solid rgba(102, 234, 223, 0.16);
+  width: 78%;
+  height: 78%;
+  border: 1px solid rgba(102, 234, 223, 0.12);
   border-radius: 50%;
-  transform: translate(-50%, -50%) rotate(-12deg);
+  transform: translate(-50%, -50%) rotate(-9deg);
+  animation: auth-orbit 46s linear infinite;
 }
 
-.ring-a { width: 42%; height: 22%; }
-.ring-b { width: 69%; height: 36%; border-color: rgba(141, 124, 255, 0.18); transform: translate(-50%, -50%) rotate(18deg); }
-.ring-c { width: 96%; height: 52%; border-style: dashed; animation: auth-orbit 42s linear infinite; }
+.auth-visual::after {
+  width: 104%;
+  height: 58%;
+  border-style: dashed;
+  border-color: rgba(141, 124, 255, 0.13);
+  transform: translate(-50%, -50%) rotate(14deg);
+  animation-direction: reverse;
+  animation-duration: 62s;
+}
+
+.body-scan {
+  position: absolute;
+  top: 11%;
+  right: 9%;
+  bottom: 8%;
+  left: 9%;
+  z-index: 3;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.body-scan::after {
+  content: "";
+  position: absolute;
+  right: 12%;
+  left: 12%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(184, 255, 247, 0.95), transparent);
+  box-shadow: 0 0 18px rgba(91, 224, 213, 0.8);
+  animation: body-scan 4.8s ease-in-out infinite;
+}
 
 .signal-node {
   position: absolute;
@@ -387,9 +420,10 @@
   text-transform: uppercase;
 }
 
-.node-a { top: 21%; left: 10%; }
-.node-b { top: 34%; right: 3%; }
-.node-c { right: 17%; bottom: 20%; }
+.node-a { top: 17%; left: 17%; }
+.node-b { top: 43%; right: 7%; }
+.node-c { top: 35%; left: 5%; }
+.node-d { right: 10%; bottom: 17%; }
 
 .auth-story-copy {
   position: absolute;
@@ -397,6 +431,17 @@
   bottom: 9%;
   left: 8%;
   z-index: 2;
+}
+
+@keyframes auth-body-breathe {
+  0%, 100% { transform: translate(-50%, -50%) scale(0.995); opacity: 0.9; }
+  50% { transform: translate(-50%, -50%) scale(1.012); opacity: 1; }
+}
+
+@keyframes body-scan {
+  0%, 100% { top: 10%; opacity: 0; }
+  16%, 84% { opacity: 0.8; }
+  50% { top: 82%; opacity: 1; }
 }
 
 .auth-story-copy p {
@@ -2326,6 +2371,8 @@
   }
 
   .auth-card {
+    grid-column: 1;
+    grid-row: 1;
     width: min(450px, calc(100% - 36px));
   }
 

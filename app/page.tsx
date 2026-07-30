@@ -133,8 +133,11 @@ export default function Home() {
         </p>
       </section>
 
-      <section className="spark medical-signal" id="signal" data-particle-shape="bulb">
+      <section className="spark medical-signal organ-section organ-section-heart" id="signal" data-particle-shape="heart">
         <div className="section-number">02 / Living signal</div>
+        <div className="organ-readout organ-readout-left" aria-hidden="true">
+          <span>01 / Cardiac system</span><strong>HEART</strong><small>Rhythm · perfusion · context</small>
+        </div>
         <div className="spark-copy reveal">
           <p className="tech-label"><i /> Continuous patient context</p>
           <h2>Care starts<br />before the visit.</h2>
@@ -146,8 +149,11 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="world" id="diagnostics" data-particle-shape="turbine">
+      <section className="world organ-section organ-section-lungs" id="diagnostics" data-particle-shape="lungs">
         <div className="section-number">03 / Diagnostics</div>
+        <div className="organ-readout organ-readout-right" aria-hidden="true">
+          <span>02 / Respiratory system</span><strong>LUNGS</strong><small>Airflow · exchange · reserve</small>
+        </div>
         <div className="world-copy reveal">
           <p className="tech-label"><i /> Evidence, in motion</p>
           <h2>From data<br />to direction.</h2>
@@ -158,13 +164,10 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="energy-system" id="care-system" data-particle-shape="atom">
+      <section className="energy-system organ-section organ-section-brain" id="care-system" data-particle-shape="brain">
         <div className="section-number">04 / Care system</div>
-        <div className="organ-atlas" aria-hidden="true">
-          <span className="organ-label organ-brain"><i />Brain<small>Neural</small></span>
-          <span className="organ-label organ-lungs"><i />Lungs<small>Respiratory</small></span>
-          <span className="organ-label organ-heart"><i />Heart<small>Cardiac</small></span>
-          <span className="organ-label organ-liver"><i />Liver<small>Metabolic</small></span>
+        <div className="organ-readout organ-readout-left" aria-hidden="true">
+          <span>03 / Neural system</span><strong>BRAIN</strong><small>Signals · cognition · coordination</small>
         </div>
         <div className="energy-system-copy reveal">
           <p className="tech-label"><i /> One coordinated pathway</p>
@@ -206,8 +209,11 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="investors" id="pathways" data-particle-shape="investors">
+      <section className="investors organ-section organ-section-liver" id="pathways" data-particle-shape="liver">
         <div className="section-number">06 / Care pathways</div>
+        <div className="organ-readout organ-readout-left" aria-hidden="true">
+          <span>04 / Metabolic system</span><strong>LIVER</strong><small>Metabolism · filtration · response</small>
+        </div>
         <div className="investors-copy reveal">
           <p className="tech-label"><i /> Designed around outcomes</p>
           <h2>One pathway.<br />Every specialist<br /><em>in sync.</em></h2>
@@ -218,9 +224,19 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="connection consultation" id="consultation" data-particle-shape="hands">
+      <section
+        className="connection consultation"
+        id="consultation"
+        data-particle-shape="hands"
+        data-particle-anchor="0.22"
+      >
         <div className="section-number">07 / Live consultation</div>
-        <div className="meeting-shell">
+        <div className="hand-sequence-copy" aria-hidden="true">
+          <span>Human connection</span>
+          <strong>Context meets care.</strong>
+          <small>Scroll to see the shared signal disperse.</small>
+        </div>
+        <div className="meeting-shell reveal">
           <div className="meeting-topbar">
             <div>
               <span className="meeting-live-dot" />

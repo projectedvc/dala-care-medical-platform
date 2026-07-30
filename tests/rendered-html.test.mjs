@@ -12,9 +12,10 @@ test("uses one persistent instanced WebGL particle scene", async () => {
   assert.match(scene, /data-particle-shape/);
   assert.match(scene, /uMouseForce/);
   assert.match(scene, /uScrollPhase/);
-  assert.match(scene, /makeBulb/);
-  assert.match(scene, /makeTurbine/);
-  assert.match(scene, /makeAtom/);
+  assert.match(scene, /makeHeart/);
+  assert.match(scene, /makeLungs/);
+  assert.match(scene, /makeBrain/);
+  assert.match(scene, /makeLiver/);
 });
 
 test("connects every medical narrative section to a particle target", async () => {
@@ -22,11 +23,11 @@ test("connects every medical narrative section to a particle target", async () =
   const targets = [
     "energy-generator",
     "cloud",
-    "bulb",
-    "turbine",
-    "atom",
+    "heart",
+    "lungs",
+    "brain",
     "ambient",
-    "investors",
+    "liver",
     "hands",
     "energy-hub",
   ];
@@ -61,6 +62,8 @@ test("connects the public experience to a dedicated clinical login", async () =>
   assert.match(login, /Enter clinical workspace/);
   assert.match(login, /router\.push\("\/portal"\)/);
   assert.match(login, /fictional patient data/i);
+  assert.match(login, /clinical-human-v1\.png/);
+  assert.match(login, /Patient digital twin/);
 });
 
 test("ships the doctor portal, AI research, patient CRM and appointments", async () => {
@@ -97,13 +100,15 @@ test("renders recognisable medical particle anatomy and leaves space for hand di
   const page = await readProjectFile("app/page.tsx");
   const styles = await readProjectFile("app/medical.css");
 
-  assert.match(scene, /Brain: two volumetric hemispheres/);
-  assert.match(scene, /Lungs: paired tapered lobes/);
-  assert.match(scene, /Heart: a filled anatomical heart/);
-  assert.match(scene, /Liver: a broad asymmetric lobe/);
-  assert.match(page, /organ-atlas/);
-  assert.match(styles, /\.organ-brain/);
-  assert.match(styles, /top: 71%/);
+  assert.match(scene, /function makeBrain/);
+  assert.match(scene, /function makeLungs/);
+  assert.match(scene, /function makeHeart/);
+  assert.match(scene, /function makeLiver/);
+  assert.match(page, /organ-readout/);
+  assert.match(page, /data-particle-anchor="0\.22"/);
+  assert.match(styles, /\.organ-readout/);
+  assert.match(styles, /\.hand-sequence-copy/);
+  assert.match(styles, /top: 80%/);
 });
 
 test("keeps platform surfaces responsive and visually separate from the public scene", async () => {
