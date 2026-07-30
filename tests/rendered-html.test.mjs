@@ -115,6 +115,21 @@ test("keeps platform surfaces responsive and visually separate from the public s
   assert.match(styles, /@media \(max-width: 760px\)/);
 });
 
+test("uses clinical loading states and an ECG cursor across the experience", async () => {
+  const chrome = await readProjectFile("app/MedicalChrome.tsx");
+  const globalStyles = await readProjectFile("app/globals.css");
+  const research = await readProjectFile("app/portal/research/page.tsx");
+  const platformStyles = await readProjectFile("app/platform.css");
+
+  assert.match(chrome, /loader-diagnostic/);
+  assert.match(chrome, /loader-ecg/);
+  assert.match(chrome, /medical-cursor-ring/);
+  assert.match(globalStyles, /\.medical-loader/);
+  assert.match(globalStyles, /\.medical-cursor-ring/);
+  assert.match(research, /research-vital-loader/);
+  assert.match(platformStyles, /\.research-vital-loader/);
+});
+
 test("ships a Windows launcher for the local site", async () => {
   const launcher = await readProjectFile("start-site.bat");
 

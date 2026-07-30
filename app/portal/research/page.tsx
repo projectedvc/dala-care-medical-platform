@@ -148,8 +148,17 @@ export default function ResearchWorkspace() {
               </>
             ) : (
               <div className="research-loading">
-                <i /><i /><i />
-                <span>Connecting patient context to clinical evidence…</span>
+                <div className="research-vital-loader" aria-hidden="true">
+                  <span>AI</span>
+                  <svg viewBox="0 0 300 52">
+                    <path d="M0 28h58l10-2 8-17 12 35 13-42 14 47 14-23h52l8-1 9-12 11 24 12-31 14 37 12-17h33" />
+                  </svg>
+                </div>
+                <strong>Connecting patient context</strong>
+                <span>Reviewing longitudinal record and clinical evidence…</span>
+                <div className="research-loader-steps">
+                  <i>01 · Record</i><i>02 · Evidence</i><i>03 · Synthesis</i>
+                </div>
               </div>
             )}
           </div>

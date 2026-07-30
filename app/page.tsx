@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import WebGLMorphScene from "./WebGLMorphScene";
 
 const clinicians = [
@@ -28,9 +28,6 @@ export default function Home() {
   const [micOn, setMicOn] = useState(true);
   const [cameraOn, setCameraOn] = useState(true);
   const [callEnded, setCallEnded] = useState(false);
-  const cursorRef = useRef<HTMLDivElement>(null);
-  const cursorGlowRef = useRef<HTMLDivElement>(null);
-
   useEffect(() => {
     let frame = 0;
     const updateProgress = () => {
@@ -40,17 +37,11 @@ export default function Home() {
         setScrollProgress(maximum > 0 ? window.scrollY / maximum : 0);
       });
     };
-    const moveCursor = (event: PointerEvent) => {
-      cursorRef.current?.style.setProperty("transform", `translate3d(${event.clientX}px, ${event.clientY}px, 0)`);
-      cursorGlowRef.current?.style.setProperty("transform", `translate3d(${event.clientX}px, ${event.clientY}px, 0)`);
-    };
     window.addEventListener("scroll", updateProgress, { passive: true });
-    window.addEventListener("pointermove", moveCursor, { passive: true });
     updateProgress();
     return () => {
       window.cancelAnimationFrame(frame);
       window.removeEventListener("scroll", updateProgress);
-      window.removeEventListener("pointermove", moveCursor);
     };
   }, []);
 
@@ -63,8 +54,6 @@ export default function Home() {
     <main id="top" className="medical-site">
       <WebGLMorphScene />
       <div className="noise" aria-hidden="true" />
-      <div ref={cursorGlowRef} className="cursor-glow" aria-hidden="true" />
-      <div ref={cursorRef} className="cursor-dot" aria-hidden="true" />
       <div className="scroll-meter" aria-hidden="true">
         <span style={{ transform: `scaleX(${scrollProgress})` }} />
       </div>

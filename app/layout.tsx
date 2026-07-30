@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { headers } from "next/headers";
+import MedicalChrome from "./MedicalChrome";
 import "./globals.css";
 import "./medical.css";
 import "./platform.css";
@@ -37,7 +38,10 @@ export async function generateMetadata(): Promise<Metadata> {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <MedicalChrome />
+        {children}
+      </body>
     </html>
   );
 }
