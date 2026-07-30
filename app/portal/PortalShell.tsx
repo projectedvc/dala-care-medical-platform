@@ -6,9 +6,12 @@ import { useState } from "react";
 
 const navigation = [
   { href: "/portal", label: "Overview", icon: "OV" },
-  { href: "/portal/research", label: "AI Research", icon: "AI" },
+  { href: "/portal/studies", label: "Studies", icon: "ST", badge: "5" },
+  { href: "/portal/research", label: "AI Research", icon: "AI", badge: "AI" },
   { href: "/portal/patients", label: "Patient CRM", icon: "PT" },
+  { href: "/portal/reports", label: "Reports", icon: "RP" },
   { href: "/portal/appointments", label: "Appointments", icon: "AP" },
+  { href: "/portal/tasks", label: "Tasks", icon: "TK", badge: "3" },
 ];
 
 export default function PortalShell({ children }: { children: React.ReactNode }) {
@@ -51,7 +54,7 @@ export default function PortalShell({ children }: { children: React.ReactNode })
               >
                 <span>{item.icon}</span>
                 <strong>{item.label}</strong>
-                {item.label === "AI Research" && <i>Beta</i>}
+                {item.badge && <i>{item.badge}</i>}
               </Link>
             );
           })}
@@ -83,7 +86,7 @@ export default function PortalShell({ children }: { children: React.ReactNode })
         <header className="portal-topbar">
           <div className="portal-search">
             <span>⌕</span>
-            <input aria-label="Search patients and records" placeholder="Search patients, visits, records…" />
+            <input aria-label="Search patients and records" placeholder="Search patients, studies, reports…" />
             <kbd>⌘ K</kbd>
           </div>
           <div className="portal-top-actions">

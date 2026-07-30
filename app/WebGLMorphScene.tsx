@@ -861,39 +861,73 @@ function makeTurbine(count: number, random: () => number) {
 
 function makeAtom(count: number, random: () => number) {
   const data = new Float32Array(count * 3);
-  const cells = [
-    { x: -2.48, y: 0, z: 0, scale: 1.02 },
-    { x: -0.9, y: 1.27, z: -0.42, scale: 0.59 },
-    { x: -0.78, y: -1.27, z: 0.38, scale: 0.61 },
-  ];
+  const TAU = Math.PI * 2;
+
   for (let i = 0; i < count; i += 1) {
-    const groupRoll = random();
-    const cell = cells[groupRoll < 0.62 ? 0 : groupRoll < 0.82 ? 1 : 2];
-    const cellScale = cell.scale;
-    const kind = random();
+    const organ = random();
     let x = 0;
     let y = 0;
     let z = 0;
 
-    if (kind < 0.22) {
-      const theta = random() * Math.PI * 2;
+    if (organ < 0.26) {
+      // Brain: two volumetric hemispheres with a modulated shell for gyri.
+      const side = random() < 0.5 ? -1 : 1;
+      const theta = random() * TAU;
       const phi = Math.acos(2 * random() - 1);
-      const radius = Math.cbrt(random()) * 0.36 * cellScale;
-      x = Math.cos(theta) * Math.sin(phi) * radius;
-      y = Math.cos(phi) * radius;
-      z = Math.sin(theta) * Math.sin(phi) * radius;
+      const gyri =
+        1 +
+        Math.sin(theta * 7 + phi * 4) * 0.075 +
+        Math.sin(theta * 3 - phi * 9) * 0.045;
+      const shell = (random() < 0.84 ? 0.91 + random() * 0.12 : Math.cbrt(random()) * 0.86) * gyri;
+      x = -3.28 + side * 0.28 + Math.cos(theta) * Math.sin(phi) * 0.54 * shell;
+      y = 1.18 + Math.cos(phi) * 0.66 * shell;
+      z = Math.sin(theta) * Math.sin(phi) * 0.5 * shell;
+    } else if (organ < 0.57) {
+      // Lungs: paired tapered lobes and a central branching airway.
+      if (random() < 0.84) {
+        const side = random() < 0.5 ? -1 : 1;
+        const theta = random() * TAU;
+        const phi = Math.acos(2 * random() - 1);
+        const vertical = Math.cos(phi);
+        const taper = 0.72 + (vertical + 1) * 0.14;
+        const shell = random() < 0.82 ? 0.9 + random() * 0.12 : Math.cbrt(random()) * 0.86;
+        x = -1.46 + side * 0.38 + Math.cos(theta) * Math.sin(phi) * 0.36 * taper * shell;
+        y = 1.03 + vertical * 0.78 * shell;
+        z = Math.sin(theta) * Math.sin(phi) * 0.42 * shell;
+      } else {
+        const branch = random() < 0.54 ? -1 : 1;
+        const progress = random();
+        x = -1.46 + branch * progress * 0.41 + (random() - 0.5) * 0.045;
+        y = 1.76 - progress * 0.63 + (random() - 0.5) * 0.045;
+        z = 0.09 + (random() - 0.5) * 0.06;
+      }
+    } else if (organ < 0.79) {
+      // Heart: a filled anatomical heart with real depth.
+      const angle = random() * TAU;
+      const fill = random() < 0.82 ? 0.82 + random() * 0.2 : Math.sqrt(random()) * 0.78;
+      const rawX = 16 * Math.pow(Math.sin(angle), 3);
+      const rawY =
+        13 * Math.cos(angle) -
+        5 * Math.cos(2 * angle) -
+        2 * Math.cos(3 * angle) -
+        Math.cos(4 * angle);
+      x = -3.25 + rawX * 0.031 * fill + rawY * 0.003;
+      y = -1.15 + rawY * 0.033 * fill;
+      z = (random() - 0.5) * (0.3 + 0.42 * (1 - fill * 0.42));
     } else {
-      const theta = random() * Math.PI * 2;
+      // Liver: a broad asymmetric lobe with a curved lower edge.
+      const theta = random() * TAU;
       const phi = Math.acos(2 * random() - 1);
-      const membrane = kind > 0.9 ? 1.16 + (random() - 0.5) * 0.17 : 1 + (random() - 0.5) * 0.055;
-      x = Math.cos(theta) * Math.sin(phi) * 1.45 * membrane * cellScale;
-      y = Math.cos(phi) * 1.18 * membrane * cellScale;
-      z = Math.sin(theta) * Math.sin(phi) * 0.9 * membrane * cellScale;
+      const shell = random() < 0.83 ? 0.9 + random() * 0.13 : Math.cbrt(random()) * 0.86;
+      const asymmetry = Math.cos(theta) > 0 ? 1 : 0.76;
+      x = -1.45 + Math.cos(theta) * Math.sin(phi) * 0.84 * asymmetry * shell;
+      y = -1.17 + Math.cos(phi) * 0.43 * shell - Math.max(0, x + 1.15) * 0.11;
+      z = Math.sin(theta) * Math.sin(phi) * 0.48 * shell;
     }
 
-    data[i * 3] = cell.x + x;
-    data[i * 3 + 1] = cell.y + y;
-    data[i * 3 + 2] = cell.z + z;
+    data[i * 3] = x;
+    data[i * 3 + 1] = y;
+    data[i * 3 + 2] = z;
   }
   return data;
 }
@@ -1315,13 +1349,13 @@ export default function WebGLMorphScene() {
       new THREE.Vector3(0, 0, 0),
       new THREE.Vector3(-1.85, 0.05, 0),
       new THREE.Vector3(1.78, 0, 0),
-      new THREE.Vector3(-1.72, 0, 0),
+      new THREE.Vector3(-2.32, 0, 0),
       new THREE.Vector3(0.22, 0.02, 0),
       new THREE.Vector3(-2.75, 0.04, 0),
       new THREE.Vector3(0, 0.04, 0),
       new THREE.Vector3(-2.34, 0, 0),
     ];
-    const volumeStrengths = [1, 0.06, 0.82, 0.55, 0.3, 0.46, 0.56, 0.34, 0.58];
+    const volumeStrengths = [1, 0.06, 0.82, 0.55, 0.74, 0.46, 0.56, 0.34, 0.58];
     const random = mulberry32(7719);
 
     const scene = new THREE.Scene();

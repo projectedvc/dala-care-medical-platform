@@ -171,6 +171,12 @@ export default function Home() {
 
       <section className="energy-system" id="care-system" data-particle-shape="atom">
         <div className="section-number">04 / Care system</div>
+        <div className="organ-atlas" aria-hidden="true">
+          <span className="organ-label organ-brain"><i />Brain<small>Neural</small></span>
+          <span className="organ-label organ-lungs"><i />Lungs<small>Respiratory</small></span>
+          <span className="organ-label organ-heart"><i />Heart<small>Cardiac</small></span>
+          <span className="organ-label organ-liver"><i />Liver<small>Metabolic</small></span>
+        </div>
         <div className="energy-system-copy reveal">
           <p className="tech-label"><i /> One coordinated pathway</p>
           <h2>Health has<br />many dimensions.</h2>

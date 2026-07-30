@@ -69,16 +69,41 @@ test("ships the doctor portal, AI research, patient CRM and appointments", async
   const research = await readProjectFile("app/portal/research/page.tsx");
   const patients = await readProjectFile("app/portal/patients/page.tsx");
   const appointments = await readProjectFile("app/portal/appointments/page.tsx");
+  const studies = await readProjectFile("app/portal/studies/page.tsx");
+  const reports = await readProjectFile("app/portal/reports/page.tsx");
+  const tasks = await readProjectFile("app/portal/tasks/page.tsx");
 
   assert.match(shell, /Clinical workspace/);
+  assert.match(shell, /\/portal\/studies/);
   assert.match(shell, /\/portal\/research/);
   assert.match(shell, /\/portal\/patients/);
+  assert.match(shell, /\/portal\/reports/);
   assert.match(shell, /\/portal\/appointments/);
+  assert.match(shell, /\/portal\/tasks/);
   assert.match(overview, /AI case brief/);
   assert.match(research, /Evidence synthesis/);
   assert.match(research, /clinician review required/i);
   assert.match(patients, /Patient CRM/);
   assert.match(appointments, /Appointments/);
+  assert.match(studies, /Clinical studies/);
+  assert.match(studies, /Clinician verification required/);
+  assert.match(reports, /Reporting queue/);
+  assert.match(reports, /Before signing/);
+  assert.match(tasks, /Clinical tasks/);
+});
+
+test("renders recognisable medical particle anatomy and leaves space for hand disintegration", async () => {
+  const scene = await readProjectFile("app/WebGLMorphScene.tsx");
+  const page = await readProjectFile("app/page.tsx");
+  const styles = await readProjectFile("app/medical.css");
+
+  assert.match(scene, /Brain: two volumetric hemispheres/);
+  assert.match(scene, /Lungs: paired tapered lobes/);
+  assert.match(scene, /Heart: a filled anatomical heart/);
+  assert.match(scene, /Liver: a broad asymmetric lobe/);
+  assert.match(page, /organ-atlas/);
+  assert.match(styles, /\.organ-brain/);
+  assert.match(styles, /top: 71%/);
 });
 
 test("keeps platform surfaces responsive and visually separate from the public scene", async () => {
