@@ -27,7 +27,20 @@
 .portal-shell button,
 .portal-shell input,
 .portal-shell textarea {
-  cursor: none;
+  cursor: default;
+}
+
+.auth-page a,
+.auth-page button,
+.portal-shell a,
+.portal-shell button {
+  cursor: pointer;
+}
+
+.auth-page input,
+.portal-shell input,
+.portal-shell textarea {
+  cursor: text;
 }
 
 .auth-page button,
@@ -2493,6 +2506,551 @@
 
   .run-research {
     width: 100%;
+  }
+}
+
+/* -------------------------------------------------------------------------- */
+/* Final clinical legibility + responsive pass                                */
+/* Keep this block last: legacy workspace modules intentionally use very       */
+/* compact type above, but the shipped CRM must remain readable at a glance.   */
+/* -------------------------------------------------------------------------- */
+
+.portal-shell {
+  font-size: 14px;
+}
+
+.portal-heading > div > p,
+.portal-shell .card-heading span,
+.portal-shell .case-context small,
+.portal-shell .patient-queue small,
+.portal-shell .detail-section small,
+.portal-shell .calendar-strip small,
+.portal-shell .appointment-info small,
+.portal-shell .insight-date small,
+.portal-shell .study-pipeline small,
+.portal-shell .study-row small,
+.portal-shell .report-queue small,
+.portal-shell .report-queue em,
+.portal-shell .report-ai-note small,
+.portal-shell .report-checklist > span,
+.portal-shell .report-history > span,
+.portal-shell .task-board article > p small,
+.portal-shell .task-summary small {
+  font-size: 10px !important;
+  line-height: 1.45;
+  letter-spacing: 0.08em;
+}
+
+.portal-heading h1 {
+  font-size: clamp(42px, 3.6vw, 60px) !important;
+  line-height: 0.98 !important;
+}
+
+.portal-heading > div > span {
+  max-width: 680px;
+  font-size: 14px !important;
+  line-height: 1.55 !important;
+}
+
+.portal-sidebar nav a strong,
+.portal-sidebar footer strong {
+  font-size: 13px !important;
+}
+
+.portal-sidebar nav a small,
+.portal-sidebar footer small {
+  font-size: 9px !important;
+}
+
+.metric-grid article small,
+.metric-grid article em,
+.metric-grid article > b {
+  font-size: 10px !important;
+  line-height: 1.35;
+}
+
+.metric-grid article strong {
+  font-size: 26px !important;
+  line-height: 1 !important;
+}
+
+.card-heading strong,
+.next-consult-card .card-heading strong,
+.patient-queue .card-heading strong {
+  font-size: 14px !important;
+}
+
+.card-heading > a,
+.card-heading > button,
+.next-patient > button,
+.queue-row button,
+.appointment-actions button,
+.report-footer button,
+.task-board article > button:last-child {
+  font-size: 10px !important;
+}
+
+.next-patient h2,
+.report-editor-top h2,
+.detail-profile h2 {
+  font-size: 23px !important;
+  line-height: 1.1;
+}
+
+.next-patient p,
+.case-context p,
+.ai-brief p,
+.feed-list p,
+.feed-list strong,
+.queue-row,
+.appointment-info p,
+.report-ai-note p,
+.report-checklist label,
+.report-history p,
+.task-board article > div strong,
+.task-board article > div span,
+.task-board article > p strong,
+.detail-alert p,
+.detail-alert strong,
+.detail-section strong,
+.care-progress p strong,
+.care-progress p small,
+.insight-readiness p strong,
+.insight-readiness p small {
+  font-size: 12px !important;
+  line-height: 1.5;
+}
+
+.feed-list small,
+.queue-row > span > small,
+.schedule-load p,
+.report-history p > small {
+  font-size: 10px !important;
+}
+
+.appointment-time strong,
+.appointment-info h2,
+.report-queue > button strong {
+  font-size: 13px !important;
+}
+
+.appointment-time small,
+.report-queue > button small,
+.report-queue > button em,
+.schedule-load > div,
+.task-summary span {
+  font-size: 10px !important;
+}
+
+.upload-fields span,
+.upload-fields input,
+.upload-fields select,
+.upload-fields textarea,
+.upload-dropzone small,
+.upload-dropzone button {
+  font-size: 12px !important;
+}
+
+.report-document textarea {
+  font-size: 13px !important;
+  line-height: 1.7 !important;
+}
+
+.portal-card,
+.metric-grid article,
+.next-consult-card,
+.clinical-feed,
+.patient-queue,
+.studies-workspace,
+.report-workspace,
+.task-board > section {
+  box-shadow: 0 18px 70px rgba(0, 0, 0, 0.12);
+}
+
+@media (max-width: 760px) {
+  .portal-shell {
+    font-size: 15px;
+  }
+
+  .portal-heading h1 {
+    font-size: clamp(34px, 10vw, 46px) !important;
+  }
+
+  .portal-heading > div > span {
+    font-size: 14px !important;
+  }
+
+  .portal-heading > div > p,
+  .portal-shell .card-heading span,
+  .portal-shell .case-context small,
+  .portal-shell .patient-queue small {
+    font-size: 10px !important;
+  }
+
+  .metric-grid article strong {
+    font-size: 24px !important;
+  }
+
+  .next-patient h2,
+  .report-editor-top h2,
+  .detail-profile h2 {
+    font-size: 21px !important;
+  }
+
+  .portal-main {
+    padding: 22px 16px 42px !important;
+  }
+
+  .portal-card,
+  .metric-grid article,
+  .next-consult-card,
+  .clinical-feed,
+  .patient-queue {
+    border-radius: 16px;
+  }
+}
+
+/* 2026 accessibility, anatomy and responsive refinement */
+.auth-story::before {
+  opacity: 0.3;
+  background-size: 112px 112px;
+  mask-image: linear-gradient(90deg, rgba(0, 0, 0, 0.55), transparent 96%);
+}
+
+.auth-visual {
+  isolation: isolate;
+}
+
+.auth-visual img {
+  z-index: 2;
+  width: min(92%, 720px);
+  height: 92%;
+  mix-blend-mode: normal;
+  filter:
+    saturate(0.92)
+    contrast(1.1)
+    brightness(1.04)
+    drop-shadow(0 0 28px rgba(105, 255, 241, 0.22))
+    drop-shadow(0 0 72px rgba(78, 202, 196, 0.12));
+}
+
+.auth-visual::before,
+.auth-visual::after {
+  display: none;
+}
+
+.anatomy-aura {
+  position: absolute;
+  top: 49%;
+  left: 50%;
+  z-index: 1;
+  width: 58%;
+  aspect-ratio: 0.6;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(109, 255, 241, 0.13), rgba(46, 190, 182, 0.025) 55%, transparent 72%);
+  filter: blur(24px);
+  transform: translate(-50%, -50%);
+  animation: anatomy-aura-pulse 5.8s ease-in-out infinite;
+}
+
+.auth-particle-field {
+  position: absolute;
+  inset: 7% 2% 5%;
+  z-index: 1;
+  overflow: hidden;
+  pointer-events: none;
+  mask-image: radial-gradient(ellipse at center, #000 18%, rgba(0, 0, 0, 0.78) 58%, transparent 94%);
+}
+
+.auth-particle {
+  position: absolute;
+  top: var(--particle-y);
+  left: var(--particle-x);
+  width: var(--particle-size);
+  height: var(--particle-size);
+  border-radius: 50%;
+  background: rgba(184, 255, 247, 0.8);
+  box-shadow: 0 0 10px rgba(102, 234, 223, 0.55);
+  animation: auth-particle-drift var(--particle-duration) ease-in-out var(--particle-delay) infinite alternate;
+}
+
+.auth-particle-violet {
+  background: #9b8cff;
+  box-shadow: 0 0 12px rgba(141, 124, 255, 0.68);
+}
+
+.auth-particle-green {
+  background: #72ffc0;
+  box-shadow: 0 0 12px rgba(80, 234, 165, 0.62);
+}
+
+.auth-story-top {
+  font-size: 10px;
+}
+
+.auth-story-copy > span {
+  color: #9ab3b0;
+  font-size: 14px;
+}
+
+.signal-node {
+  font-size: 10px;
+}
+
+.auth-card {
+  width: min(490px, calc(100% - 62px));
+  padding: 42px;
+}
+
+.auth-card-heading > p,
+.portal-heading > div > p {
+  font-size: 11px;
+}
+
+.auth-card-heading > span {
+  color: #a7bdba;
+  font-size: 15px;
+}
+
+.role-switch button {
+  font-size: 13px;
+}
+
+.auth-card form > label > span {
+  font-size: 10px;
+}
+
+.auth-card input {
+  height: 54px;
+  font-size: 15px;
+}
+
+.auth-options,
+.auth-security p {
+  font-size: 11px;
+}
+
+.auth-submit {
+  min-height: 56px;
+  font-size: 11px;
+}
+
+.portal-shell {
+  --portal-muted: #91aaa7;
+}
+
+.portal-shell p {
+  font-size: max(12px, 0.72rem);
+  line-height: 1.55;
+}
+
+.portal-shell small {
+  font-size: max(9px, 0.58rem) !important;
+  line-height: 1.45;
+}
+
+.portal-shell button,
+.portal-shell input,
+.portal-shell textarea,
+.portal-shell select {
+  font-size: max(11px, 0.68rem);
+}
+
+.portal-brand strong {
+  font-size: 19px;
+}
+
+.portal-nav a strong {
+  font-size: 13px;
+}
+
+.portal-nav a > span,
+.workspace-label strong,
+.portal-search input,
+.card-heading strong,
+.portal-shell article > div > strong {
+  font-size: max(11px, 0.68rem);
+}
+
+.portal-heading h1 {
+  font-size: clamp(38px, 4vw, 60px);
+}
+
+.metric-card > strong,
+.metric-card .metric-value {
+  font-size: clamp(26px, 2.2vw, 36px);
+}
+
+@keyframes anatomy-aura-pulse {
+  0%, 100% { opacity: 0.6; transform: translate(-50%, -50%) scale(0.96); }
+  50% { opacity: 1; transform: translate(-50%, -50%) scale(1.05); }
+}
+
+@keyframes auth-particle-drift {
+  from { opacity: 0.22; transform: translate3d(-8px, 11px, 0) scale(0.72); }
+  to { opacity: 0.9; transform: translate3d(13px, -16px, 0) scale(1.18); }
+}
+
+@media (max-width: 980px) {
+  .auth-page {
+    display: flex;
+    min-height: 100svh;
+    overflow-x: hidden;
+    overflow-y: auto;
+    flex-direction: column;
+    padding-top: 72px;
+  }
+
+  .auth-brand {
+    position: fixed;
+    top: 18px;
+    left: 20px;
+    z-index: 20;
+  }
+
+  .auth-story {
+    display: block;
+    order: 1;
+    width: 100%;
+    min-height: 68svh;
+    border-right: 0;
+    border-bottom: 1px solid var(--portal-line);
+  }
+
+  .auth-story-top {
+    top: 24px;
+    right: 22px;
+    left: 22px;
+  }
+
+  .auth-visual {
+    top: 48%;
+    left: 50%;
+    width: min(94vw, 700px);
+    height: 64svh;
+  }
+
+  .auth-visual img {
+    width: min(88%, 540px);
+    height: 90%;
+  }
+
+  .auth-story-copy {
+    right: 22px;
+    bottom: 24px;
+    left: 22px;
+  }
+
+  .auth-story-copy p {
+    max-width: 520px;
+    font-size: clamp(30px, 7vw, 52px);
+  }
+
+  .auth-story-copy > span {
+    max-width: 440px;
+    font-size: 13px;
+  }
+
+  .auth-card {
+    order: 2;
+    width: min(560px, calc(100% - 28px));
+    margin: 26px auto;
+    padding: clamp(24px, 6vw, 42px);
+  }
+
+  .auth-footer {
+    position: relative;
+    right: auto;
+    bottom: auto;
+    left: auto;
+    order: 3;
+    gap: 14px;
+    padding: 16px 20px 28px;
+    font-size: 9px;
+  }
+
+  .portal-sidebar {
+    width: min(86vw, 288px);
+  }
+}
+
+@media (max-width: 600px) {
+  .auth-page {
+    padding-top: 62px;
+  }
+
+  .auth-brand {
+    top: 14px;
+    font-size: 18px;
+  }
+
+  .auth-story {
+    min-height: 58svh;
+  }
+
+  .auth-story-top strong,
+  .node-c,
+  .node-d {
+    display: none;
+  }
+
+  .auth-visual {
+    height: 55svh;
+  }
+
+  .auth-visual img {
+    height: 86%;
+  }
+
+  .auth-story-copy p {
+    margin-bottom: 8px;
+    font-size: clamp(28px, 10vw, 42px);
+  }
+
+  .auth-story-copy > span {
+    display: none;
+  }
+
+  .auth-card-heading h1 {
+    font-size: clamp(42px, 14vw, 58px);
+  }
+
+  .auth-options {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .auth-footer {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .portal-content {
+    padding: 20px 12px 38px;
+  }
+
+  .portal-heading h1 {
+    font-size: clamp(34px, 11vw, 46px);
+  }
+
+  .portal-topbar {
+    min-height: 62px;
+    padding-left: 58px;
+  }
+
+  .new-consult-button {
+    min-width: 0;
+    padding-inline: 12px;
+    font-size: 9px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .auth-particle,
+  .anatomy-aura,
+  .auth-visual img,
+  .body-scan::after {
+    animation: none !important;
   }
 }
 

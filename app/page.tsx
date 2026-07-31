@@ -1,7 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import WebGLMorphScene from "./WebGLMorphScene";
+import dynamic from "next/dynamic";
+
+const WebGLMorphScene = dynamic(() => import("./WebGLMorphScene"), {
+  ssr: false,
+  loading: () => <div className="scene-loading" aria-hidden="true" />,
+});
 
 const clinicians = [
   {

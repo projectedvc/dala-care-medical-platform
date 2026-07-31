@@ -2,7 +2,23 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { FormEvent, useState } from "react";
+import { CSSProperties, FormEvent, useState } from "react";
+
+const anatomyParticles = Array.from({ length: 84 }, (_, index) => {
+  const column = (index * 37) % 101;
+  const row = (index * 61) % 97;
+  const size = 1.5 + ((index * 17) % 5) * 0.65;
+  const duration = 6.5 + ((index * 23) % 8) * 0.7;
+
+  return {
+    x: `${column}%`,
+    y: `${row}%`,
+    size: `${size}px`,
+    duration: `${duration}s`,
+    delay: `${-((index * 29) % 90) / 10}s`,
+    tone: index % 9 === 0 ? "violet" : index % 5 === 0 ? "green" : "cyan",
+  };
+});
 
 export default function LoginPage() {
   const router = useRouter();
@@ -70,8 +86,24 @@ export default function LoginPage() {
           <strong>01 / Whole-person view</strong>
         </div>
         <div className="auth-visual" aria-hidden="true">
+          <div className="auth-particle-field">
+            {anatomyParticles.map((particle, index) => (
+              <i
+                key={index}
+                className={`auth-particle auth-particle-${particle.tone}`}
+                style={{
+                  "--particle-x": particle.x,
+                  "--particle-y": particle.y,
+                  "--particle-size": particle.size,
+                  "--particle-duration": particle.duration,
+                  "--particle-delay": particle.delay,
+                } as CSSProperties}
+              />
+            ))}
+          </div>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/assets/clinical-human-v1.png" alt="" />
+          <img src="/assets/clinical-human-transparent-v2.png" alt="" />
+          <i className="anatomy-aura" />
           <i className="body-scan" />
           <span className="signal-node node-a">Neural</span>
           <span className="signal-node node-b">Cardiac</span>

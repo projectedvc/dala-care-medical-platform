@@ -1120,25 +1120,6 @@ function makeHands(count: number, random: () => number) {
 function makeEnergyHub(count: number, random: () => number) {
   const data = new Float32Array(count * 3);
   const TAU = Math.PI * 2;
-  const cubic = (
-    start: [number, number],
-    controlA: [number, number],
-    controlB: [number, number],
-    end: [number, number],
-    progress: number,
-  ) => {
-    const inverse = 1 - progress;
-    return [
-      inverse ** 3 * start[0] +
-        3 * inverse ** 2 * progress * controlA[0] +
-        3 * inverse * progress ** 2 * controlB[0] +
-        progress ** 3 * end[0],
-      inverse ** 3 * start[1] +
-        3 * inverse ** 2 * progress * controlA[1] +
-        3 * inverse * progress ** 2 * controlB[1] +
-        progress ** 3 * end[1],
-    ] as const;
-  };
 
   for (let i = 0; i < count; i += 1) {
     const kind = random();
@@ -1146,46 +1127,43 @@ function makeEnergyHub(count: number, random: () => number) {
     let y = 0;
     let z = 0;
 
-    if (kind < 0.3) {
-      // Chest piece: concentric 3D membrane and bright listening surface.
-      const angle = random() * TAU;
-      const ring = random() < 0.62;
-      const radius = ring ? 0.62 + (random() - 0.5) * 0.1 : Math.sqrt(random()) * 0.53;
-      x = -2.34 + Math.cos(angle) * radius;
-      y = -1.12 + Math.sin(angle) * radius;
-      z = (random() - 0.5) * (ring ? 0.26 : 0.42);
-    } else if (kind < 0.71) {
-      // Flexible tubing, split asymmetrically into two earpieces.
-      const rightBranch = random() > 0.51;
-      const progress = random();
-      const point = rightBranch
-        ? cubic([-2.34, -0.5], [-2.2, 0.42], [-1.3, 0.48], [-0.92, 1.56], progress)
-        : cubic([-2.34, -0.5], [-2.58, 0.44], [-3.58, 0.38], [-3.92, 1.42], progress);
-      const width = 0.07 + Math.sin(progress * Math.PI) * 0.055;
-      x = point[0] + (random() - 0.5) * width;
-      y = point[1] + (random() - 0.5) * width;
-      z = Math.sin(progress * Math.PI) * (rightBranch ? 0.42 : -0.38) + (random() - 0.5) * 0.16;
-    } else if (kind < 0.86) {
-      const right = random() > 0.5;
-      const angle = THREE.MathUtils.lerp(right ? -0.15 : Math.PI + 0.1, right ? Math.PI * 1.18 : Math.PI * 2.15, random());
-      const centerX = right ? -0.74 : -4.08;
-      x = centerX + Math.cos(angle) * 0.38 + (random() - 0.5) * 0.06;
-      y = 1.56 + Math.sin(angle) * 0.3 + (random() - 0.5) * 0.06;
-      z = (right ? 0.34 : -0.32) + (random() - 0.5) * 0.18;
-    } else {
-      // A faint ECG line passes through the stethoscope as a final living
-      // signal, keeping the surrounding field active rather than empty.
+    if (kind < 0.7) {
+      // A universal clinical cross. Sampling its outer shell rather than a
+      // filled block keeps the final object dimensional and unmistakable.
+      const vertical = random() < 0.55;
+      const halfX = vertical ? 0.52 : 1.62;
+      const halfY = vertical ? 1.62 : 0.52;
+      const face = Math.floor(random() * 6);
+      x = (random() * 2 - 1) * halfX;
+      y = (random() * 2 - 1) * halfY;
+      z = (random() * 2 - 1) * 0.42;
+      if (face === 0) x = -halfX;
+      if (face === 1) x = halfX;
+      if (face === 2) y = -halfY;
+      if (face === 3) y = halfY;
+      if (face === 4) z = -0.42;
+      if (face === 5) z = 0.42;
+      x -= 2.34;
+    } else if (kind < 0.87) {
+      // A living ECG signal runs through and beyond the cross.
       const progress = random();
       x = THREE.MathUtils.lerp(-5.15, 0.75, progress);
-      const phase = (progress * 2.55) % 1;
+      const phase = (progress * 2.3) % 1;
       const gaussian = (value: number, center: number, width: number) =>
         Math.exp(-Math.pow((value - center) / width, 2));
       y =
-        -0.08 +
-        gaussian(phase, 0.4, 0.016) * 0.9 -
-        gaussian(phase, 0.445, 0.026) * 0.33 +
-        (random() - 0.5) * 0.045;
-      z = -0.5 + (random() - 0.5) * 0.18;
+        -1.72 +
+        gaussian(phase, 0.39, 0.018) * 0.92 -
+        gaussian(phase, 0.445, 0.028) * 0.36 +
+        (random() - 0.5) * 0.055;
+      z = -0.54 + (random() - 0.5) * 0.16;
+    } else {
+      // Particle halo gives the cross a quiet field without CSS orbit lines.
+      const angle = random() * TAU;
+      const radius = 1.9 + (random() - 0.5) * 0.18;
+      x = -2.34 + Math.cos(angle) * radius;
+      y = Math.sin(angle) * radius * 0.88;
+      z = Math.sin(angle * 2) * 0.34 + (random() - 0.5) * 0.12;
     }
 
     data[i * 3] = x;
@@ -1278,28 +1256,39 @@ function makeLiver(count: number, random: () => number) {
     let y = 0;
     let z = 0;
 
-    if (kind < 0.86) {
+    if (kind < 0.58) {
+      // Dominant right lobe: wide, shallow and gently wedged.
       const theta = random() * TAU;
       const phi = Math.acos(2 * random() - 1);
-      const shell = random() < 0.82 ? 0.9 + random() * 0.12 : Math.cbrt(random()) * 0.88;
-      const asymmetry = Math.cos(theta) > 0 ? 1 : 0.72;
-      x = -2.3 + Math.cos(theta) * Math.sin(phi) * 2.15 * asymmetry * shell;
-      y = 0.08 + Math.cos(phi) * 1.28 * shell - Math.max(0, x + 1.8) * 0.12;
-      z = Math.sin(theta) * Math.sin(phi) * 1.0 * shell;
-      // Flatten the superior surface and curve the inferior edge.
-      y = Math.min(y, 0.95 + Math.sin(theta) * 0.08);
-    } else if (kind < 0.96) {
-      const branch = random() < 0.5 ? -1 : 1;
+      const shell = random() < 0.86 ? 0.9 + random() * 0.12 : Math.cbrt(random()) * 0.86;
+      x = -2.72 + Math.cos(theta) * Math.sin(phi) * 1.72 * shell;
+      y = 0.02 + Math.cos(phi) * 1.16 * shell - Math.max(0, x + 2.1) * 0.08;
+      z = Math.sin(theta) * Math.sin(phi) * 0.72 * shell;
+      y = Math.min(y, 0.92 + Math.sin(theta) * 0.06);
+    } else if (kind < 0.82) {
+      // Smaller left lobe overlaps the main lobe and creates the recognizable
+      // asymmetric hepatic silhouette instead of a generic sphere.
+      const theta = random() * TAU;
+      const phi = Math.acos(2 * random() - 1);
+      const shell = random() < 0.88 ? 0.91 + random() * 0.1 : Math.cbrt(random()) * 0.88;
+      x = -1.15 + Math.cos(theta) * Math.sin(phi) * 1.42 * shell;
+      y = 0.28 + Math.cos(phi) * 0.86 * shell;
+      z = Math.sin(theta) * Math.sin(phi) * 0.54 * shell;
+      y -= Math.max(0, x + 0.9) * 0.16;
+    } else if (kind < 0.95) {
+      // Portal-vein branches on the front surface.
+      const branch = random() < 0.54 ? -1 : 1;
       const progress = random();
       const halo = random() * TAU;
-      x = -2.35 + branch * progress * 1.22 + Math.cos(halo) * 0.06;
-      y = -0.1 + Math.sin(progress * Math.PI) * 0.5 - progress * 0.62 + Math.sin(halo) * 0.06;
-      z = 0.74 - progress * 0.36;
+      x = -2.28 + branch * progress * (branch > 0 ? 1.48 : 1.18) + Math.cos(halo) * 0.055;
+      y = -0.08 + Math.sin(progress * Math.PI) * 0.42 - progress * 0.5 + Math.sin(halo) * 0.055;
+      z = 0.66 - progress * 0.18;
     } else {
-      const angle = random() * TAU;
-      x = -2.25 + Math.cos(angle) * (2.35 + random() * 0.24);
-      y = Math.sin(angle) * (1.32 + random() * 0.14);
-      z = (random() - 0.5) * 1.2;
+      // Inferior edge accent keeps the two lobes visually joined.
+      const progress = random();
+      x = THREE.MathUtils.lerp(-4.25, 0.22, progress);
+      y = -0.88 + Math.sin(progress * Math.PI) * -0.34 + (random() - 0.5) * 0.08;
+      z = (random() - 0.5) * 0.44;
     }
 
     data[i * 3] = x;
@@ -1336,7 +1325,10 @@ export default function WebGLMorphScene() {
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const mobile = window.innerWidth < 760;
     const lowCoreDevice = typeof navigator.hardwareConcurrency === "number" && navigator.hardwareConcurrency <= 4;
-    const count = reducedMotion ? 2400 : mobile ? 4300 : lowCoreDevice ? 6500 : 10400;
+    const lowMemoryDevice = (navigator as Navigator & { deviceMemory?: number }).deviceMemory !== undefined &&
+      ((navigator as Navigator & { deviceMemory?: number }).deviceMemory ?? 8) <= 4;
+    const constrainedDevice = lowCoreDevice || lowMemoryDevice;
+    const count = reducedMotion ? 1800 : mobile ? 3000 : constrainedDevice ? 4800 : 8200;
     const targets = makeTargets(count);
     const formCenters = [
       new THREE.Vector3(2.15, 0.05, 0),
@@ -1474,7 +1466,7 @@ export default function WebGLMorphScene() {
       }
       if (!candidates.length) return;
 
-      const handCount = reducedMotion ? 4200 : mobile ? 8800 : lowCoreDevice ? 12800 : 21000;
+      const handCount = reducedMotion ? 3000 : mobile ? 5800 : constrainedDevice ? 8600 : 14200;
       const handPositions = new Float32Array(handCount * 3);
       const handSeeds = new Float32Array(handCount);
       const handRandomVectors = new Float32Array(handCount * 3);
@@ -1607,7 +1599,7 @@ export default function WebGLMorphScene() {
       camera.aspect = window.innerWidth / Math.max(window.innerHeight, 1);
       uniforms.uViewportAspect.value = camera.aspect;
       camera.updateProjectionMatrix();
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, mobile ? 1.2 : 1.45));
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, mobile ? 1 : constrainedDevice ? 1.08 : 1.25));
       renderer.setSize(window.innerWidth, window.innerHeight, false);
       if (handParticles) {
         const handScaleX = THREE.MathUtils.clamp(
@@ -1708,15 +1700,29 @@ export default function WebGLMorphScene() {
       });
     };
     window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("pointermove", onPointerMove, { passive: true });
-    window.addEventListener("pointerleave", onPointerLeave);
+    if (!mobile && !reducedMotion) {
+      window.addEventListener("pointermove", onPointerMove, { passive: true });
+      window.addEventListener("pointerleave", onPointerLeave);
+    }
 
     const startedAt = performance.now();
     let previousFrameAt = startedAt;
+    let previousDrawAt = 0;
+    const targetFrameDuration = reducedMotion
+      ? 1000 / 20
+      : mobile
+        ? 1000 / 30
+        : constrainedDevice
+          ? 1000 / 45
+          : 0;
     let frame = 0;
     const render = () => {
       if (disposed) return;
+      frame = window.requestAnimationFrame(render);
       const now = performance.now();
+      if (document.hidden) return;
+      if (targetFrameDuration && now - previousDrawAt < targetFrameDuration) return;
+      previousDrawAt = now;
       const elapsed = (now - startedAt) / 1000;
       const delta = Math.min((now - previousFrameAt) / 1000, 0.05);
       previousFrameAt = now;
@@ -1759,9 +1765,8 @@ export default function WebGLMorphScene() {
         handParticles.rotation.y = Math.sin(elapsed * 0.15) * 0.012 * dimensionalMotion;
       }
       renderer.render(scene, camera);
-      frame = window.requestAnimationFrame(render);
     };
-    render();
+    frame = window.requestAnimationFrame(render);
 
     return () => {
       disposed = true;

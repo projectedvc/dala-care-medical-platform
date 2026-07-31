@@ -62,7 +62,8 @@ test("connects the public experience to a dedicated clinical login", async () =>
   assert.match(login, /Enter clinical workspace/);
   assert.match(login, /router\.push\("\/portal"\)/);
   assert.match(login, /fictional patient data/i);
-  assert.match(login, /clinical-human-v1\.png/);
+  assert.match(login, /clinical-human-transparent-v2\.png/);
+  assert.match(login, /auth-particle-field/);
   assert.match(login, /Patient digital twin/);
 });
 
@@ -120,7 +121,7 @@ test("keeps platform surfaces responsive and visually separate from the public s
   assert.match(styles, /@media \(max-width: 760px\)/);
 });
 
-test("uses clinical loading states and an ECG cursor across the experience", async () => {
+test("uses clinical loading states and a native accessible cursor across the experience", async () => {
   const chrome = await readProjectFile("app/MedicalChrome.tsx");
   const globalStyles = await readProjectFile("app/globals.css");
   const research = await readProjectFile("app/portal/research/page.tsx");
@@ -128,9 +129,10 @@ test("uses clinical loading states and an ECG cursor across the experience", asy
 
   assert.match(chrome, /loader-diagnostic/);
   assert.match(chrome, /loader-ecg/);
-  assert.match(chrome, /medical-cursor-ring/);
+  assert.doesNotMatch(chrome, /medical-cursor-ring/);
   assert.match(globalStyles, /\.medical-loader/);
-  assert.match(globalStyles, /\.medical-cursor-ring/);
+  assert.match(globalStyles, /cursor: pointer/);
+  assert.match(globalStyles, /\.medical-cursor-ring,[\s\S]*?display: none/);
   assert.match(research, /research-vital-loader/);
   assert.match(platformStyles, /\.research-vital-loader/);
 });

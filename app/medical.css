@@ -246,8 +246,8 @@
   z-index: 6;
   display: grid;
   gap: 4px;
-  min-width: 170px;
-  padding: 11px 13px;
+  min-width: 220px;
+  padding: 14px 16px;
   border-left: 1px solid rgba(110, 255, 239, 0.42);
   color: rgba(212, 255, 250, 0.72);
   background: linear-gradient(90deg, rgba(3, 19, 20, 0.82), rgba(3, 19, 20, 0.08));
@@ -258,13 +258,13 @@
 
 .organ-readout span {
   color: rgba(110, 255, 239, 0.64);
-  font-size: 7px;
+  font-size: 9px;
   letter-spacing: 0.11em;
 }
 
 .organ-readout strong {
   color: #e3fffc;
-  font-size: 12px;
+  font-size: 18px;
   font-weight: 400;
   letter-spacing: 0.18em;
   text-shadow: 0 0 20px rgba(53, 227, 211, 0.34);
@@ -272,17 +272,19 @@
 
 .organ-readout small {
   color: rgba(125, 164, 161, 0.58);
-  font-size: 6px;
+  font-size: 8px;
   letter-spacing: 0.12em;
 }
 
 .organ-readout-left {
-  top: 71%;
+  top: auto;
+  bottom: 10%;
   left: clamp(24px, 21vw, 420px);
 }
 
 .organ-readout-right {
-  top: 70%;
+  top: auto;
+  bottom: 10%;
   right: clamp(24px, 21vw, 420px);
 }
 
@@ -719,6 +721,20 @@
   }
 
   .organ-readout {
+    display: grid;
+    right: auto;
+    bottom: 7svh;
+    left: 18px;
+    min-width: 168px;
+    padding: 10px 12px;
+    background: linear-gradient(90deg, rgba(3, 19, 20, 0.92), rgba(3, 19, 20, 0.14));
+  }
+
+  .organ-readout span { font-size: 7px; }
+  .organ-readout strong { font-size: 14px; }
+  .organ-readout small { font-size: 6px; }
+
+  .medical-site .noise {
     display: none;
   }
 
